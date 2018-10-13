@@ -1,8 +1,16 @@
+/*+
+Autor: Pedro Luis Fuertes Moreno
+Grupo: 3º A3
+*/
 
 
 #include "aux.h"     // includes de OpenGL/glut/glew, windows, y librería std de C++
 #include "escena.h"
-#include "malla.h" // objetos: Cubo y otros....
+#include "ply_reader.h"
+//#include "malla.h" // objetos: Cubo y otros....
+#include <string>
+
+using namespace std;
 
 //**************************************************************************
 // constructor de la escena (no puede usar ordenes de OpenGL)
@@ -10,9 +18,9 @@
 
 Escena::Escena()
 {
-    Front_plane       = 50.0;
+    Front_plane       = 0.1;
     Back_plane        = 2000.0;
-    Observer_distance = 4*Front_plane;
+    Observer_distance = 2.0;
     Observer_angle_x  = 0.0 ;
     Observer_angle_y  = 0.0 ;
 
@@ -20,11 +28,20 @@ Escena::Escena()
 
     // crear los objetos de las prácticas: Mallas o Jerárquicos....
     cubo = new Cubo();
+    tetraedro = new Tetraedro();
+    cilindro = new Cilindro(4,4);
+    cono = new Cono(4,4);
+    esfera = new Esfera(40,40);
 
-    // .......completar: ...
-    // .....
+    objeto_actual = 0; 
+    num_objetos = 6 ; // se usa al pulsar la tecla 'O' (rotar objeto actual)
+    num_modos = 4;  // se usa añ pulsar la letra 'm' 
 
-    num_objetos = 1 ; // se usa al pulsar la tecla 'O' (rotar objeto actual)
+    num_colores = 3, 
+    color_actual = 0;
+    leer_ply = true;
+    //num_texturas = 2; // se usa para cambiar las texturas 't'
+    modo_diferido = false; 
 }
 
 //**************************************************************************
@@ -39,11 +56,13 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
 
 	glEnable( GL_DEPTH_TEST );	// se habilita el z-bufer
 
-	Width  = UI_window_width/10;
+	/*Width  = UI_window_width/10;
 	Height = UI_window_height/10;
 
    change_projection( float(UI_window_width)/float(UI_window_height) );
-	glViewport( 0, 0, UI_window_width, UI_window_height );
+	glViewport( 0, 0, UI_window_width, UI_window_height );*/
+  redimensionar( UI_window_width, UI_window_height );
+
 }
 
 // **************************************************************************
@@ -59,6 +78,24 @@ void Escena::dibujar_objeto_actual()
    //    llamar glPolygonMode, glColor... (y alguna cosas más), según dicho modo
    // .........completar (práctica 1)
 
+    // Definimos el color ==> rojo
+   // Se definirá más adelante con el glColorPointer
+    /*switch( color_actual )
+   {
+      case 0:
+        (1,0,0); // Rojo
+      break;
+      case 1:
+        glColor3f(0,0,1); // Azul
+      break;
+      case 2:
+        glColor3f(0,1,0); // Azul
+      break;
+    }*/
+    
+    // Definimos la textura
+    
+    
 
    // (2) dibujar el objeto actual usando método 'draw' del objeto asociado al
    // valor entero en 'objeto_actual'
@@ -66,15 +103,70 @@ void Escena::dibujar_objeto_actual()
    switch( objeto_actual )
    {
       case 0:
-         if ( cubo != nullptr ) cubo->draw() ;
+         if ( cubo != nullptr )       cubo->      draw(modo_diferido, modo_actual, color_actual) ;
          break ;
-      // case 1:
-         //  ......completar un caso por cada objeto que se haya creado
-      // case 2:
+      case 1:
+         if ( tetraedro != nullptr )  tetraedro-> draw(modo_diferido, modo_actual, color_actual) ;
+         break;
+       case 2:
+         if ( cilindro != nullptr )   cilindro->  draw(modo_diferido, modo_actual, color_actual) ;
+         break;
+      case 3:
+         if ( cono != nullptr )       cono->      draw(modo_diferido, modo_actual, color_actual) ;
+         break;
+      case 4:
+         if ( esfera != nullptr )     esfera->    draw(modo_diferido, modo_actual, color_actual) ;
+         leer_ply = true; 
+         break;
+      case 5:
+        if(leer_ply)
+         if ( (es_ply && objPLY != nullptr) || (!es_ply && objRevolucion != nullptr) ){
+          cout << "¿Quieres leer otro archivo PLY? (si/no)" << endl;
+          string respues;
+          getline (cin,respues);
+          if(respues.find("s") != string::npos){
+            cout << "Introduzca el nombre del archivo PLY que desa cargar" << endl;
+            leerPLY();
+          }
+         }   
+         else{
+            cout << "Introduzca el nombre del archivo PLY que desa cargar" << endl;
+            leerPLY();
+         }
+         if(es_ply){
+           objPLY->       draw(modo_diferido, modo_actual, color_actual) ;
+         }
+         else{
+            cout << "Llego al draw" << endl; 
+           objRevolucion->draw(modo_diferido, modo_actual, color_actual) ;
+         }
+         leer_ply = false; 
+         break;
       default:
          cout << "draw_object: el número de objeto actual (" << objeto_actual << ") es incorrecto." << endl ;
          break ;
    }
+}
+
+void Escena::leerPLY(){
+
+    unsigned
+      num_vertices = 0,
+      num_caras   = 0 ;
+      string ruta;
+      getline (cin,ruta);
+
+    ply::leer_cabecera(ruta, num_vertices, num_caras);
+    if(num_caras > 0){
+      objPLY = new ObjPLY(ruta);
+      es_ply = true; 
+    }else{
+      objRevolucion = new ObjRevolucion(ruta);
+
+      es_ply = false; 
+    }
+
+    
 }
 
 // **************************************************************************
@@ -114,8 +206,23 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
       case 'O' :
          // activar siguiente objeto
          objeto_actual = (objeto_actual+1) % num_objetos ;
-         cout << "objeto actual == " << objeto_actual << endl ;
+         cout << "Objeto actual == " << objeto_actual << endl ;
          break ;
+      case 'M' :
+         modo_actual = (modo_actual+1) % num_modos ;
+         cout << "Modo actual == " << modo_actual << endl ;
+         break ;
+      case 'V' : // Cambiamos la visualización
+        modo_diferido = !modo_diferido;
+        if(modo_diferido)
+          cout << "Modo cambiado a diferido"<< endl ;
+        else
+          cout << "Modo cambiado a inmediato"<< endl ;
+      break ;
+      case 'C' :
+        color_actual = (color_actual+1) % num_colores ;
+        cout << "Color actual == " << color_actual << endl ;
+      break ;
    }
    return false ;
 }
@@ -157,10 +264,11 @@ void Escena::teclaEspecial( int Tecla1, int x, int y )
 
 void Escena::change_projection( const float ratio_xy )
 {
-   glMatrixMode( GL_PROJECTION );
-   glLoadIdentity();
-   const float wx = float(Height)*ratio_xy ;
-   glFrustum( -wx, wx, -Height, Height, Front_plane, Back_plane );
+  glMatrixMode( GL_PROJECTION );
+  glLoadIdentity();
+  const float wy = 0.84*Front_plane,
+  wx = ratio_xy*wy ;
+  glFrustum( -wx, +wx, -wy, +wy, Front_plane, Back_plane );
 }
 //**************************************************************************
 // Funcion que se invoca cuando cambia el tamaño de la ventana
@@ -168,10 +276,10 @@ void Escena::change_projection( const float ratio_xy )
 
 void Escena::redimensionar( int newWidth, int newHeight )
 {
-   Width  = newWidth/10;
-   Height = newHeight/10;
-   change_projection( float(newHeight)/float(newWidth) );
-   glViewport( 0, 0, newWidth, newHeight );
+  Width = newWidth;
+  Height = newHeight;
+  change_projection( float(Width)/float(Height) );
+  glViewport( 0, 0, Width, Height );
 }
 
 //**************************************************************************
@@ -181,9 +289,9 @@ void Escena::redimensionar( int newWidth, int newHeight )
 void Escena::change_observer()
 {
    // posicion del observador
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
-   glTranslatef( 0.0, 0.0, -Observer_distance );
-   glRotatef( Observer_angle_y, 0.0 ,1.0, 0.0 );
-   glRotatef( Observer_angle_x, 1.0, 0.0, 0.0 );
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  glTranslatef( 0.0, 0.0, -Observer_distance );
+  glRotatef( Observer_angle_x, 1.0 ,0.0, 0.0 );
+  glRotatef( Observer_angle_y, 0.0, 1.0, 0.0 );
 }

@@ -1,9 +1,21 @@
+/*+
+Autor: Pedro Luis Fuertes Moreno
+Grupo: 3º A3
+*/
+
 #ifndef _ESCENA_H
 #define _ESCENA_H
 
 #include "ejes.h"
-#include "malla.h"
+//#include "malla.h"
 #include "jerarquico.h"
+#include "cubo.h"
+#include "tetraedro.h"
+#include "cilindro.h"
+#include "cono.h"
+#include "esfera.h"
+#include "objPLY.h"
+
 
 class Escena
 {
@@ -28,15 +40,32 @@ class Escena
 	void change_observer();
 
    int objeto_actual = 0 , // objeto actual (el que se visualiza)
-       num_objetos   = 0 ; // número de objetos (actualizado al crear los objetos en el constructor)
+       num_objetos = 0   ; // número de objetos (actualizado al crear los objetos en el constructor)
+
+   int num_modos = 0, 
+       modo_actual = 0;
+
+   int num_colores = 0, 
+       color_actual = 0;
+
+   bool modo_diferido = false;
+   bool leer_ply;
+   bool es_ply;
 
    // Objetos de la escena
-   Cubo * cubo = nullptr ; // es importante inicializarlo a 'nullptr'
+   Cubo           * cubo            = nullptr;
+   Tetraedro      * tetraedro       = nullptr;
+   Cilindro       * cilindro        = nullptr;
+   Cono           * cono            = nullptr;
+   Esfera         * esfera          = nullptr;
+   ObjPLY         * objPLY          = nullptr;
+   ObjRevolucion  * objRevolucion   = nullptr;
 
    // completar: añadir punteros a tetraedro u otros (práctica 1),
    //            y a un objeto PLY y de revolución (práctica 2),
    //           y a un objeto jerarquico (práctica 3).
    // ......
+   void leerPLY();
 
    public:
 

@@ -25,13 +25,14 @@
 #ifndef PLY_READER_H_INCLUDED
 #define PLY_READER_H_INCLUDED
 
+#include <iostream>
 #include <vector>
 #include <string>
 #include "tuplasg.h"
 
 namespace ply
 {
-
+using namespace std ;
 // **********************************************************************
 // **
 // ** ply::read
@@ -80,6 +81,16 @@ void read_vertices
    std::vector<Tupla3f> & vertices            // salida:  vector de coords. de vert.
 );
 
+void leer_cabecera
+(
+   const std::string &    nombre_archivo_pse,
+   unsigned & num_vertices,
+   unsigned & num_caras
+   );
+
 } ; // fin namespace ply
+
+
+
 
 #endif // _PLY_H

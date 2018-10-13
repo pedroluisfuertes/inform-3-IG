@@ -1,3 +1,8 @@
+/*+
+Autor: Pedro Luis Fuertes Moreno
+Grupo: 3º A3
+*/
+
 // #############################################################################
 //
 // Informática Gráfica (Grado Informática)
@@ -23,60 +28,38 @@ class ObjMallaIndexada
    public:
 
    // dibuja el objeto en modo inmediato
-   void draw_ModoInmediato();
+   void draw_ModoInmediato(int modo, int color);
 
    // dibuja el objeto en modo diferido (usando VBOs)
-   void draw_ModoDiferido();
+   void draw_ModoDiferido(int modo, int color);
 
    // función que redibuja el objeto
    // está función llama a 'draw_MI' (modo inmediato)
    // o bien a 'draw_MD' (modo diferido, VBOs)
-   void draw() ;
+   void draw(bool modo_diferido, int modo, int color);
+
+   GLuint CrearVBO( GLuint tipo_vbo, GLuint tamanio_bytes, GLvoid * puntero_ram );
 
    protected:
 
    void calcular_normales() ; // calcula tabla de normales de vértices (práctica 3)
+   void colorear(); 
 
    std::vector<Tupla3f> vertices ;   // tabla de coordenadas de vértices (una tupla por vértice, con tres floats)
    std::vector<Tupla3i> triangulos ; // una terna de 3 enteros por cada cara o triángulo
+   std::vector<std::vector<Tupla3f> > colores ; // una terna de 3 enteros por cada cara o triángulo
+   
+   GLuint id_vbo_vertices   = 0 ; // resultado: identificador de VBO de vertices
+   GLuint id_vbo_triangulos = 0 ; // resultado: identificador de VBO de triángulos
+   GLuint id_vbo_colores = 0 ; // resultado: identificador de VBO de triángulos
 
    // completar: tabla de colores, tabla de normales de vértices
-} ;
+   private:
+   void dibujaInmediato(int color); 
+   void dibujaDiferido(int color); 
 
-// *****************************************************************************
-//
-// clases derivadas de ObjMallaIndexada (definen constructores específicos)
-//
-// *****************************************************************************
 
-// *****************************************************************************
-// Cubo con centro en el origen y lado unidad
-// (tiene 9 vertices y 6 caras)
-
-class Cubo : public ObjMallaIndexada
-{
-   public:
-   Cubo() ;
-
-} ;
-
-// *****************************************************************************
-// objeto leído de un archivo PLY
-
-class ObjPLY : public ObjMallaIndexada
-{
-   public:
-      ObjPLY( const std::string & nombre_archivo );
-
-} ;
-
-// *****************************************************************************
-// objeto de revolución obtenido a partir de un perfil (en un PLY)
-
-class ObjRevolucion : public ObjMallaIndexada
-{
-   public:
-      ObjRevolucion( const std::string & nombre_ply_perfil );
+    
 } ;
 
 #endif

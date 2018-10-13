@@ -123,7 +123,7 @@ int main( int argc, char **argv )
    glutInitWindowSize(UI_window_width,UI_window_height);
 
    // llamada para crear la ventana, indicando el titulo
-   glutCreateWindow("Practicas IG: NOMBRE DEL ALUMNO");
+   glutCreateWindow("Practicas IG: Pedro Luis Fuertes");
 
    // asignación de la funcion llamada "dibujar" al evento de dibujo
    glutDisplayFunc( draw_scene );
@@ -136,6 +136,9 @@ int main( int argc, char **argv )
 
    // asignación de la funcion llamada "tecla_Especial" al evento correspondiente
    glutSpecialFunc( special_keys );
+
+   // Para evitar el degradado
+   glShadeModel( GL_FLAT ); 
 
    // inicialización de librería GLEW (solo en Linux)
    #ifdef LINUX

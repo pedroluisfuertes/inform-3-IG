@@ -204,6 +204,26 @@ void leer_caras
 
 void leer_cabecera
 (
+   const std::string &    nombre_archivo_pse,
+   unsigned & num_vertices,
+   unsigned & num_caras
+){
+
+   ifstream
+      src ;
+   string
+      na = nombre_archivo_pse ;
+
+   if ( na.substr( na.find_last_of(".")+1 ) != "ply" )
+      na += ".ply" ;
+
+   abrir_archivo( na, src ) ;
+   leer_cabecera( src, num_vertices, num_caras, true ) ;
+
+}
+
+void leer_cabecera
+(
    ifstream & src,
    unsigned & num_vertices,
    unsigned & num_caras,
@@ -232,7 +252,9 @@ void leer_cabecera
      src >> token ;
 
      if ( token == "end_header" )
-     {  if ( state != 2 )
+     {  
+      cout << "state = " << state << endl; 
+      if ( !(state == 1 || state == 2 ))
            error("no encuentro 'element vertex' o 'element face' en la cabecera");
         src.getline(buffer,tam_buffer);
         en_cabecera = false ;
@@ -257,6 +279,7 @@ void leer_cabecera
            src >> nv ;
            //cout << "  numero de vértices == " << nv << endl ;
            state = lee_num_caras ? 1 : 2 ;
+           //state = 2; 
         }
         else if ( lee_num_caras && token == "face" )
         {  if ( state != 1 )
@@ -279,8 +302,8 @@ void leer_cabecera
       error("no se ha encontrado el número de vértices, o bien es 0 o negativo");
 
 
-   if ( lee_num_caras ) if ( nc <= 0 )
-      error("no se ha encontrado el número de caras, o bien es 0 o negativo");
+   //if ( lee_num_caras ) if ( nc <= 0 )
+   //   error("no se ha encontrado el número de caras, o bien es 0 o negativo");
 
    if ( nv > numeric_limits<int>::max() )
       error("el número de vértices es superior al valor 'int' más grande posible.");
