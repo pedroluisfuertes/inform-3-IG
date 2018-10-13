@@ -253,7 +253,6 @@ void leer_cabecera
 
      if ( token == "end_header" )
      {  
-      cout << "state = " << state << endl; 
       if ( !(state == 1 || state == 2 ))
            error("no encuentro 'element vertex' o 'element face' en la cabecera");
         src.getline(buffer,tam_buffer);

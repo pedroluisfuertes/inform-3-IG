@@ -174,7 +174,6 @@ void ObjMallaIndexada::colorear(){
   // Damos colores a los objetos, independeientemente del número de caras
   const std::vector<Tupla3f> colores_model = { { 1, 0, 0 }, { 0, 0, 1 }, { 0, 1, 1 } }; 
     colores.resize(colores_model.size()); 
-    cout << vertices.size() << endl; 
     for(int i = 0; i < colores_model.size(); i++){
       for(int j = 0; j < vertices.size(); j++){
         colores[i].push_back(colores_model[i]); 

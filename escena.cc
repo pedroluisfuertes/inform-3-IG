@@ -29,7 +29,7 @@ Escena::Escena()
     // crear los objetos de las prácticas: Mallas o Jerárquicos....
     cubo = new Cubo();
     tetraedro = new Tetraedro();
-    cilindro = new Cilindro(4,4);
+    cilindro = new Cilindro(1,4);
     cono = new Cono(4,4);
     esfera = new Esfera(40,40);
 
@@ -137,7 +137,6 @@ void Escena::dibujar_objeto_actual()
            objPLY->       draw(modo_diferido, modo_actual, color_actual) ;
          }
          else{
-            cout << "Llego al draw" << endl; 
            objRevolucion->draw(modo_diferido, modo_actual, color_actual) ;
          }
          leer_ply = false; 
@@ -155,6 +154,13 @@ void Escena::leerPLY(){
       num_caras   = 0 ;
       string ruta;
       getline (cin,ruta);
+      if(ruta.find("/") == string::npos){
+        ruta = "./plys/" + ruta; 
+      }
+
+      if(ruta.find(".") == 0){
+        ruta += ".ply"; 
+      }
 
     ply::leer_cabecera(ruta, num_vertices, num_caras);
     if(num_caras > 0){

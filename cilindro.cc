@@ -28,8 +28,8 @@ void Cilindro::construir( const int num_vert_perfil, const int num_instancias_pe
 				y = radio; 
 				z = 0;
 
-				for(int i = 0; i <= num_instancias_perf; i++){
-					x = altura/num_instancias_perf*i;
+				for(int i = 0; i <= num_vert_perfil; i++){
+					x = altura/num_vert_perfil*i;
 					vertice = {x,y,z}; 
 				  	perfil.push_back(vertice);
 
@@ -38,8 +38,8 @@ void Cilindro::construir( const int num_vert_perfil, const int num_instancias_pe
 			case 1:
 				x = radio; 
 				z = 0;
-				for(int i = 0; i <= num_instancias_perf; i++){
-					y = altura/num_instancias_perf*i;
+				for(int i = 0; i <= num_vert_perfil; i++){
+					y = altura/num_vert_perfil*i;
 					vertice = {x,y,z}; 
 				  	perfil.push_back(vertice);
 
