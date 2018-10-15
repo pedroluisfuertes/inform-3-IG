@@ -103,19 +103,19 @@ void Escena::dibujar_objeto_actual()
    switch( objeto_actual )
    {
       case 0:
-         if ( cubo != nullptr )       cubo->      draw(modo_diferido, modo_actual, color_actual) ;
+         if ( cubo != nullptr )       cubo->      draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
          break ;
       case 1:
-         if ( tetraedro != nullptr )  tetraedro-> draw(modo_diferido, modo_actual, color_actual) ;
+         if ( tetraedro != nullptr )  tetraedro-> draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
          break;
        case 2:
-         if ( cilindro != nullptr )   cilindro->  draw(modo_diferido, modo_actual, color_actual) ;
+         if ( cilindro != nullptr )   cilindro->  draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
          break;
       case 3:
-         if ( cono != nullptr )       cono->      draw(modo_diferido, modo_actual, color_actual) ;
+         if ( cono != nullptr )       cono->      draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
          break;
       case 4:
-         if ( esfera != nullptr )     esfera->    draw(modo_diferido, modo_actual, color_actual) ;
+         if ( esfera != nullptr )     esfera->    draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
          leer_ply = true; 
          break;
       case 5:
@@ -134,10 +134,10 @@ void Escena::dibujar_objeto_actual()
             leerPLY();
          }
          if(es_ply){
-           objPLY->       draw(modo_diferido, modo_actual, color_actual) ;
+           objPLY->       draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
          }
          else{
-           objRevolucion->draw(modo_diferido, modo_actual, color_actual) ;
+           objRevolucion->draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
          }
          leer_ply = false; 
          break;
@@ -229,6 +229,31 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
         color_actual = (color_actual+1) % num_colores ;
         cout << "Color actual == " << color_actual << endl ;
       break ;
+      case 'P' :
+        color_actual = (color_actual+1) % num_colores ;
+        cout << "Color actual == " << color_actual << endl ;
+      break ;
+      case 'A' :
+        color_actual = (color_actual+1) % num_colores ;
+        cout << "Color actual == " << color_actual << endl ;
+      break ;
+      case 'Z' :
+        color_actual = (color_actual+1) % num_colores ;
+        cout << "Color actual == " << color_actual << endl ;
+      break ;
+      case 'z' :
+        color_actual = (color_actual+1) % num_colores ;
+        cout << "Color actual == " << color_actual << endl ;
+      break ;
+      case '>' :
+        color_actual = (color_actual+1) % num_colores ;
+        cout << "Color actual == " << color_actual << endl ;
+      break ;
+      case '<' :
+        color_actual = (color_actual+1) % num_colores ;
+        cout << "Color actual == " << color_actual << endl ;
+      break ;
+      
    }
    return false ;
 }

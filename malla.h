@@ -17,6 +17,15 @@ Grupo: 3º A3
 
 #include "aux.h"
 
+enum ModoVis
+{
+  SOLIDO, 
+  LINEAS,
+  PUNTOS,
+  AJEDREZ 
+
+};
+
 // *****************************************************************************
 //
 // clase para objetos 3D (mallas indexadas)
@@ -28,15 +37,17 @@ class ObjMallaIndexada
    public:
 
    // dibuja el objeto en modo inmediato
-   void draw_ModoInmediato(int modo, int color);
+   void draw_ModoInmediato(ModoVis modo, int color);
 
    // dibuja el objeto en modo diferido (usando VBOs)
-   void draw_ModoDiferido(int modo, int color);
+   void draw_ModoDiferido(ModoVis modo, int color);
 
    // función que redibuja el objeto
    // está función llama a 'draw_MI' (modo inmediato)
    // o bien a 'draw_MD' (modo diferido, VBOs)
-   void draw(bool modo_diferido, int modo, int color);
+   void draw( ModoVis modo, bool modo_diferido,int color);
+
+   void draw( ModoVis modo, bool modo_diferido);
 
    GLuint CrearVBO( GLuint tipo_vbo, GLuint tamanio_bytes, GLvoid * puntero_ram );
 

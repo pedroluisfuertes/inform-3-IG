@@ -1,3 +1,6 @@
+#ifndef __CILINDRO_H__
+#define __CILINDRO_H__
+
 #include "objRevolucion.h"
 #include "aux.h"
 
@@ -12,3 +15,5 @@ class Cilindro : public ObjRevolucion
 		Cilindro( const int num_vert_perfil,
 		const int num_instancias_perf, const float radio, const float altura, const int eje, const bool tapaSuperior, const bool tapaInferior);
 } ;
+
+#endif

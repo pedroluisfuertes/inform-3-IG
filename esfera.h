@@ -1,3 +1,6 @@
+#ifndef __ESFERA_H__
+#define __ESFERA_H__
+
 #include "objRevolucion.h"
 #include "aux.h"
 
@@ -12,3 +15,5 @@ class Esfera : public ObjRevolucion
 		Esfera( const int num_vert_perfil,
 		const int num_instancias_perf, const float radio, const int eje);
 } ;
+
+#endif

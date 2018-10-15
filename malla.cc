@@ -19,7 +19,7 @@ Grupo: 3º A3
 
 using namespace std;
 
-void ObjMallaIndexada::draw_ModoInmediato(int modo, int color)
+void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo, int color)
 {   
 
     // habilitar uso de un array de vértices
@@ -31,15 +31,15 @@ void ObjMallaIndexada::draw_ModoInmediato(int modo, int color)
 
     switch( modo )
    {
-      case 0:
+      case SOLIDO:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Solido
         dibujaInmediato(color);
       break ;
-      case 1:
+      case LINEAS:
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Con líneas
         dibujaInmediato(color);
         break;
-      case 2:
+      case PUNTOS:
         glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); // Con puntos
         glPointSize(8); // Cambiamos el tamaño de los puntos para que se vean mejor
         //glEnable(GL_POINT_SMOOTH); // Para que se vean redondos
@@ -47,7 +47,7 @@ void ObjMallaIndexada::draw_ModoInmediato(int modo, int color)
         //glEnable(GL_BLEND);
         dibujaInmediato(color);
       break;
-      case 3:
+      case AJEDREZ:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Solido
         /*
         void glColorPointer(  GLint size, GLenum type, GLsizei stride, const GLvoid * pointer);
@@ -94,24 +94,24 @@ void ObjMallaIndexada::dibujaInmediato(int color){
 // -----------------------------------------------------------------------------
 // Visualización en modo diferido con 'glDrawElements' (usando VBOs)
 
-void ObjMallaIndexada::draw_ModoDiferido(int modo, int color)
+void ObjMallaIndexada::draw_ModoDiferido(ModoVis modo, int color)
 { 
 
    switch( modo )
    {
-      case 0:
+      case SOLIDO:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Solido
         dibujaDiferido(color);
       break ;
-       case 1:
+       case LINEAS:
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Solido
         dibujaDiferido(color);
       break ;
-       case 2:
+       case PUNTOS:
         glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); // Solido
         dibujaDiferido(color);
       break ;
-      case 3:
+      case AJEDREZ:
         //cout << "No soportado para el modo diferido" << endl;
       break;
     }
@@ -153,12 +153,17 @@ void ObjMallaIndexada::dibujaDiferido(int color){
     glDisableClientState( GL_VERTEX_ARRAY );
 
 }
+void ObjMallaIndexada::draw(ModoVis modo, bool modo_diferido)
+{
+
+	draw(modo, modo_diferido, 0); 
+}
 
 // -----------------------------------------------------------------------------
 // Función de visualización de la malla,
 // puede llamar a  draw_ModoInmediato o bien a draw_ModoDiferido
 
-void ObjMallaIndexada::draw(bool modo_diferido, int modo, int color)
+void ObjMallaIndexada::draw(ModoVis modo, bool modo_diferido, int color)
 {
 
   glEnable(GL_CULL_FACE);

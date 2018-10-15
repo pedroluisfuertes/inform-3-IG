@@ -1,3 +1,7 @@
+#ifndef __BJPLY_H__
+#define __BJPLY_H__
+
+
 #include "malla.h"
 
 // *****************************************************************************
@@ -9,3 +13,5 @@ class ObjPLY : public ObjMallaIndexada
       ObjPLY( const std::string & nombre_archivo );
 
 } ;
+
+#endif

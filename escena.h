@@ -7,7 +7,7 @@ Grupo: 3º A3
 #define _ESCENA_H
 
 #include "ejes.h"
-//#include "malla.h"
+#include "malla.h"
 #include "jerarquico.h"
 #include "cubo.h"
 #include "tetraedro.h"
@@ -15,7 +15,6 @@ Grupo: 3º A3
 #include "cono.h"
 #include "esfera.h"
 #include "objPLY.h"
-
 
 class Escena
 {
