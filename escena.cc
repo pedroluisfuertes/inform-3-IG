@@ -27,14 +27,16 @@ Escena::Escena()
     ejes.changeAxisSize( 5000 );
 
     // crear los objetos de las prácticas: Mallas o Jerárquicos....
-    cubo = new Cubo();
-    tetraedro = new Tetraedro();
-    cilindro = new Cilindro(1,4);
-    cono = new Cono(4,4);
-    esfera = new Esfera(40,40);
+    cubo            = new Cubo();
+    tetraedro       = new Tetraedro();
+    cilindro        = new Cilindro(1,4);
+    cono            = new Cono(4,4);
+    esfera          = new Esfera(40,40);
+    objJerarquico   = new ObjJerarquico(); objJerarquico->inicioAnimaciones( );
+    
 
     objeto_actual = 0; 
-    num_objetos = 6 ; // se usa al pulsar la tecla 'O' (rotar objeto actual)
+    num_objetos = 7 ; // se usa al pulsar la tecla 'O' (rotar objeto actual)
     num_modos = 4;  // se usa añ pulsar la letra 'm' 
 
     num_colores = 3, 
@@ -95,7 +97,6 @@ void Escena::dibujar_objeto_actual()
     
     // Definimos la textura
     
-    
 
    // (2) dibujar el objeto actual usando método 'draw' del objeto asociado al
    // valor entero en 'objeto_actual'
@@ -108,7 +109,7 @@ void Escena::dibujar_objeto_actual()
       case 1:
          if ( tetraedro != nullptr )  tetraedro-> draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
          break;
-       case 2:
+      case 2:
          if ( cilindro != nullptr )   cilindro->  draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
          break;
       case 3:
@@ -119,7 +120,7 @@ void Escena::dibujar_objeto_actual()
          leer_ply = true; 
          break;
       case 5:
-        if(leer_ply)
+        /*if(leer_ply)
          if ( (es_ply && objPLY != nullptr) || (!es_ply && objRevolucion != nullptr) ){
           cout << "¿Quieres leer otro archivo PLY? (si/no)" << endl;
           string respues;
@@ -139,8 +140,12 @@ void Escena::dibujar_objeto_actual()
          else{
            objRevolucion->draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
          }
-         leer_ply = false; 
+         leer_ply = false; */
          break;
+      case 6:
+           objJerarquico->draw((ModoVis) modo_actual, modo_diferido) ;
+           objJerarquico->actualizarEstado( );
+        break;
       default:
          cout << "draw_object: el número de objeto actual (" << objeto_actual << ") es incorrecto." << endl ;
          break ;
@@ -191,7 +196,7 @@ void Escena::dibujar()
 }
 
 //**************************************************************************
-//
+// 
 // función que se invoca cuando se pulsa una tecla
 // Devuelve true si se ha pulsado la tecla para terminar el programa (Q),
 // devuelve false en otro caso.

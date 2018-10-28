@@ -59,6 +59,7 @@ class Escena
    Esfera         * esfera          = nullptr;
    ObjPLY         * objPLY          = nullptr;
    ObjRevolucion  * objRevolucion   = nullptr;
+   ObjJerarquico  * objJerarquico   = nullptr;
 
    // completar: añadir punteros a tetraedro u otros (práctica 1),
    //            y a un objeto PLY y de revolución (práctica 2),

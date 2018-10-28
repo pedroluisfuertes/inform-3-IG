@@ -10,7 +10,7 @@
 #ifndef GRAFOPARAM_H_INCLUDED
 #define GRAFOPARAM_H_INCLUDED
 
-#include "malla.h" // añadir .h de cualquier objetos malla indexada usados....
+#include "malla.h"
 #include "cubo.h"
 #include "tetraedro.h"
 #include "cilindro.h"
@@ -44,6 +44,11 @@ class GrafoParam
    void columna( const float altura, const float ag_rotacion,
                              const float radio_cil );
 
+   void pala   ( const float altura, const float ag_rotacion);
+   void barraVerticalMenor( const int alturaBrazo, const float ag_rotacion);
+   void barraHorizontal( const int longitudBrazoHorizontal );
+   void barraVerticalSuperior( const float altura, const float ag_rotacion);
+
 
    // objetos tipo malla indexada (nodos terminales)
 
@@ -58,10 +63,12 @@ class GrafoParam
    // valores efectivos de los parámetros (angulos, distancias, factores de
    // escala, etc.....) calculados a partir de los valores no acotados
 
-   float altura_1,       // altura de la primera columna
-         ag_rotacion_1,  // ángulo en grados de rotación (1)
-         altura_2,       // altura de la segunda columna
-         ag_rotacion_2 ; // ángulo en grados de rotación (2)
+   float rotacionPala,
+         alturaPala, 
+         movimientoPala,
+         rotacionBrazoPala, 
+         alturaBrazo,
+         rotacionBrazo;
 
 } ;
 
