@@ -44,10 +44,10 @@ class GrafoParam
    void columna( const float altura, const float ag_rotacion,
                              const float radio_cil );
 
-   void pala   ( const float altura, const float ag_rotacion);
-   void barraVerticalMenor( const int alturaBrazo, const float ag_rotacion);
-   void barraHorizontal( const int longitudBrazoHorizontal );
-   void barraVerticalSuperior( const float altura, const float ag_rotacion);
+   void pala   ( );
+   void barraVerticalMenor( );
+   void barraHorizontal(  );
+   void barraVerticalSuperior( );
 
 
    // objetos tipo malla indexada (nodos terminales)
@@ -59,6 +59,10 @@ class GrafoParam
    ModoVis modo_vis ;      // modo de visualización
    bool    usar_diferido ; // modo de envío (true -> diferido, false -> inmediato)
 
+
+   const int ALTURA_BRAZO_MENOR = 8,
+             LONGITUD_BRAZO_HORIZONTAL = 15,
+             ALTURA_GRUA = 20;
 
    // valores efectivos de los parámetros (angulos, distancias, factores de
    // escala, etc.....) calculados a partir de los valores no acotados

@@ -41,13 +41,13 @@ void GrafoParam::actualizarValorEfe( const unsigned iparam, const float valor_na
          alturaPala = valorMinimo;
          break ;
       case 2:
-         movimientoPala = 0; 
+         movimientoPala = 4; 
          break ;
       case 3:
          rotacionBrazoPala = sin( 2.0*M_PI*valor_na );
          break ;
       case 4:
-         alturaBrazo = 0;
+         alturaBrazo = 10;
          break ;
       case 5:
          rotacionBrazo  = sin( 2.0*M_PI*valor_na );
@@ -96,42 +96,16 @@ void GrafoParam::draw( const ModoVis p_modo_vis, const bool p_usar_diferido )
       glTranslatef( 0.5, 0.5, 0.5 );
       cubo->draw( modo_vis, usar_diferido );*/
 
-      int alturaBrazo = 10;
       int longitudBrazoHorizontal = 15; 
       
 
       glPushMatrix();
       // Barra Vertical Superior
       glColor3f( 1, 1, 0.0 );
-      barraVerticalSuperior(0,0);
+      barraVerticalSuperior( );
       glPopMatrix();
 
-      glTranslatef( 0.0, 5, 0.0 );
-      glPushMatrix();
-      // Barra Horizontal
-      glColor3f( 1, 1, 0.0 );
-      glTranslatef( 0.0, alturaBrazo, 0.0 );
-      glRotatef( rotacionBrazo, 0.0, 1.0, 0.0 );
-      barraHorizontal(longitudBrazoHorizontal);
-      glPopMatrix();
-
-      glTranslatef( 2.0, alturaBrazo, 0.0 );
-      glPushMatrix();
-      // Varra Vertical Menor
-      glColor3f( 1, 1, 0.0 );
-      glTranslatef( movimientoPala, 0.0, 0.0 );
-      glRotatef( rotacionPala, 1.0, 0.0, 0.0 );
-      barraVerticalMenor(alturaBrazo,0);
-      glPopMatrix();
-
-      glTranslatef( 0.0, -alturaBrazo, 0.0 );
-      glPushMatrix();
-      //Pala
-      glColor3f( 1, 1, 0.0 );
-      glTranslatef( 0.0, alturaPala, 0.0 );
-      glRotatef( rotacionPala, 0.0, 1.0, 0.0 );
-      pala(0,0);
-      glPopMatrix();
+      
 
       glPopMatrix();
    
@@ -157,12 +131,12 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
    glPopMatrix();
 }
 
-   void GrafoParam::pala( const float altura, const float ag_rotacion){
+   void GrafoParam::pala( ){
       
       // Engranche
       glPushMatrix();
          glTranslatef(0,-0.25/2,0);
-         glScalef( 0.25, 0.25, 0.25 );
+         glScalef( 0.35, 0.25, 0.35 );
          cilindro->draw( modo_vis, usar_diferido );
       glPopMatrix();
       // Pala
@@ -179,7 +153,7 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
          cilindro->draw( modo_vis, usar_diferido );
       glPopMatrix();
    }
-   void GrafoParam::barraVerticalMenor( const int alturaBrazo, const float ag_rotacion){
+   void GrafoParam::barraVerticalMenor( ){
       
       // Engranche
       glPushMatrix();
@@ -190,14 +164,23 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
       glPopMatrix();
       // Brazo
       glPushMatrix();
-         glTranslatef(0,-alturaBrazo,0);
-         glScalef( 0.25, alturaBrazo, 0.25 );
+         glTranslatef(0,-ALTURA_BRAZO_MENOR,0);
+         glScalef( 0.25, ALTURA_BRAZO_MENOR, 0.25 );
          cilindro->draw( modo_vis, usar_diferido );
       glPopMatrix();
+
+      glTranslatef( 0.0, -ALTURA_BRAZO_MENOR, 0.0 );
+      glPushMatrix();
+
+      //Pala
+      glColor3f( 1, 1, 0.0 );
+      glTranslatef( 0.0, alturaPala, 0.0 );
+      glRotatef( rotacionPala, 0.0, 1.0, 0.0 );
+      pala();
+      glPopMatrix();
    }
-   void GrafoParam::barraHorizontal( const int longitudBrazoHorizontal ){
+   void GrafoParam::barraHorizontal(  ){
        
-      
        // Engranche
       glPushMatrix();
          glTranslatef(0, -0.5/2, 0);
@@ -206,26 +189,33 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
       glPopMatrix();
       // Barra
       glPushMatrix();
-         glTranslatef(3*longitudBrazoHorizontal/4, 0, 0);
+         glTranslatef(3*LONGITUD_BRAZO_HORIZONTAL/4, 0, 0);
          glRotatef( 90, 0.0, 0.0, 1.0 );
-         glScalef( 0.25, longitudBrazoHorizontal, 0.25 );
+         glScalef( 0.25, LONGITUD_BRAZO_HORIZONTAL, 0.25 );
          cilindro->draw( modo_vis, usar_diferido );
       glPopMatrix();
       // Contrapeso
       glPushMatrix();
-         glTranslatef(-longitudBrazoHorizontal/4, 0, 0);
+         glTranslatef(-LONGITUD_BRAZO_HORIZONTAL/4, 0, 0);
          glScalef( 0.75, 0.75, 0.75 );
          cubo->draw( modo_vis, usar_diferido );
       glPopMatrix();
+
+      glPushMatrix();
+      // Varra Vertical Menor
+      glColor3f( 1, 1, 0.0 );
+      glTranslatef( movimientoPala, 0.0, 0.0 );
+      glRotatef( rotacionPala, 1.0, 0.0, 0.0 );
+      barraVerticalMenor();
+      glPopMatrix();
       
    }
-   void GrafoParam::barraVerticalSuperior( const float altura, const float ag_rotacion){
-      int longitud = 20;
+   void GrafoParam::barraVerticalSuperior( ){
       // Apoyo
       glPushMatrix();
          glTranslatef(0, 2, 0);
          glPushMatrix();
-            glTranslatef(0, longitud, 0);
+            glTranslatef(0, ALTURA_GRUA, 0);
             glScalef( 1, 0.05, 1);
             cilindro->draw( modo_vis, usar_diferido );
          glPopMatrix();
@@ -236,7 +226,7 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
          glPopMatrix();
          // Barra
          glPushMatrix();
-            glScalef( 0.5, longitud, 0.5 );
+            glScalef( 0.5, ALTURA_GRUA, 0.5 );
             cilindro->draw( modo_vis, usar_diferido );
          glPopMatrix();
       glPopMatrix();
@@ -245,6 +235,16 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
          glTranslatef(0, 1, 0);
          glScalef( 3, 2, 3 );
          cubo->draw( modo_vis, usar_diferido );
+      glPopMatrix();
+
+      glTranslatef( 0.0, 10, 0.0 );
+
+      glPushMatrix();
+      // Barra Horizontal
+      glColor3f( 1, 1, 0.0 );
+      glTranslatef( 0.0, alturaBrazo, 0.0 );
+      glRotatef( rotacionBrazo, 0.0, 1.0, 0.0 );
+      barraHorizontal();
       glPopMatrix();
 
    }
