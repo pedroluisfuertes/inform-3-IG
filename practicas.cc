@@ -88,6 +88,12 @@ void special_keys( int tecla, int x, int y )
 	glutPostRedisplay();
 }
 
+void funcion_desocupado(){
+   if(escena != nullptr){
+      escena->mgeDesocupado();
+   }
+}
+
 //***************************************************************************
 // Programa principal
 //

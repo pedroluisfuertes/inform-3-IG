@@ -19,12 +19,13 @@ ObjJerarquico::ObjJerarquico()
 {
    objparam = new GrafoParam();
 
+   delta_valores_na = 1; 
    // inicializar el valor no acotado de cada parámetro a 0, e
    // iniciaizar asimismo su valor efectivo.
    for( unsigned i = 0 ; i < objparam->numParametros() ; i++ )
    {
-      valores_na.push_back( 0.0 );
-      objparam->actualizarValorEfe( i, valores_na[i] ) ;
+      //valores_na.push_back( 0.0 );
+      //objparam->actualizarValorEfe( i, valores_na[i] ) ;
    }
 }
 
@@ -49,8 +50,7 @@ void ObjJerarquico::incrementaParamAct()
    assert( objparam != nullptr );
    assert( i_param_act < objparam->numParametros() );
 
-   valores_na[i_param_act] += delta_valores_na/20.0 ;
-   objparam->actualizarValorEfe( i_param_act, valores_na[i_param_act] );
+   objparam->actualizarValorEfe( i_param_act, delta_valores_na, true );
 }
 
 // -----------------------------------------------------------------------------
@@ -62,8 +62,7 @@ void ObjJerarquico::decrementaParamAct()
    assert( objparam != nullptr );
    assert( i_param_act < objparam->numParametros() );
 
-   valores_na[i_param_act] -= delta_valores_na/20.0 ;
-   objparam->actualizarValorEfe( i_param_act, valores_na[i_param_act] );
+   objparam->actualizarValorEfe( i_param_act, delta_valores_na, false );
 }
 
 // -----------------------------------------------------------------------------
@@ -148,7 +147,7 @@ void ObjJerarquico::actualizarEstado()
 
    for( unsigned i = 0 ; i < num_parametros ; i++ )
    {
-      valores_na[i] += delta_t_s*delta_valores_na ;
-      objparam->actualizarValorEfe( i, valores_na[i] );
+      //valores_na[i] += delta_t_s*delta_valores_na ;
+      //objparam->actualizarValorEfe( i, valores_na[i] );
    }
 }

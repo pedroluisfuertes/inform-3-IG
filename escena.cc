@@ -32,7 +32,7 @@ Escena::Escena()
     cilindro        = new Cilindro(1,4);
     cono            = new Cono(4,4);
     esfera          = new Esfera(40,40);
-    objJerarquico   = new ObjJerarquico(); objJerarquico->inicioAnimaciones( );
+    objJerarquico   = new ObjJerarquico();
     
 
     objeto_actual = 0; 
@@ -80,21 +80,6 @@ void Escena::dibujar_objeto_actual()
    //    llamar glPolygonMode, glColor... (y alguna cosas más), según dicho modo
    // .........completar (práctica 1)
 
-    // Definimos el color ==> rojo
-   // Se definirá más adelante con el glColorPointer
-    /*switch( color_actual )
-   {
-      case 0:
-        (1,0,0); // Rojo
-      break;
-      case 1:
-        glColor3f(0,0,1); // Azul
-      break;
-      case 2:
-        glColor3f(0,1,0); // Azul
-      break;
-    }*/
-    
     // Definimos la textura
     
 
@@ -103,7 +88,7 @@ void Escena::dibujar_objeto_actual()
 
    switch( objeto_actual )
    {
-      case 0:
+      case Objetos::CUBO:
          if ( cubo != nullptr )       cubo->      draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
          break ;
       case 1:
@@ -144,7 +129,6 @@ void Escena::dibujar_objeto_actual()
          break;
       case 6:
            objJerarquico->draw((ModoVis) modo_actual, modo_diferido) ;
-           objJerarquico->actualizarEstado( );
         break;
       default:
          cout << "draw_object: el número de objeto actual (" << objeto_actual << ") es incorrecto." << endl ;
@@ -208,21 +192,25 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
    using namespace std ;
    cout << "Tecla pulsada: '" << tecla << "'" << endl;
 
-   switch( toupper(tecla) )
-   {
+   switch( tecla )
+   {  
+      case 'q' :
       case 'Q' :
          // salir
          return true ;
          break ;
+      case 'o' :
       case 'O' :
          // activar siguiente objeto
          objeto_actual = (objeto_actual+1) % num_objetos ;
          cout << "Objeto actual == " << objeto_actual << endl ;
          break ;
+      case 'm' :
       case 'M' :
          modo_actual = (modo_actual+1) % num_modos ;
          cout << "Modo actual == " << modo_actual << endl ;
          break ;
+      case 'v' :
       case 'V' : // Cambiamos la visualización
         modo_diferido = !modo_diferido;
         if(modo_diferido)
@@ -230,37 +218,60 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
         else
           cout << "Modo cambiado a inmediato"<< endl ;
       break ;
+      case 'c' :
       case 'C' :
         color_actual = (color_actual+1) % num_colores ;
         cout << "Color actual == " << color_actual << endl ;
       break ;
+      case 'p' :
       case 'P' :
-        color_actual = (color_actual+1) % num_colores ;
-        cout << "Color actual == " << color_actual << endl ;
+        objJerarquico->siguienteParametro();
       break ;
+      case 'a' :
       case 'A' :
-        color_actual = (color_actual+1) % num_colores ;
-        cout << "Color actual == " << color_actual << endl ;
+        conmutarAnimaciones(); 
       break ;
       case 'Z' :
-        color_actual = (color_actual+1) % num_colores ;
-        cout << "Color actual == " << color_actual << endl ;
+        objJerarquico->incrementaParamAct();
       break ;
       case 'z' :
-        color_actual = (color_actual+1) % num_colores ;
-        cout << "Color actual == " << color_actual << endl ;
+        objJerarquico->decrementaParamAct();
       break ;
       case '>' :
-        color_actual = (color_actual+1) % num_colores ;
-        cout << "Color actual == " << color_actual << endl ;
+        objJerarquico->decelerar();
       break ;
       case '<' :
-        color_actual = (color_actual+1) % num_colores ;
-        cout << "Color actual == " << color_actual << endl ;
+        objJerarquico->acelerar();
       break ;
       
    }
    return false ;
+}
+
+void Escena::conmutarAnimaciones(){
+
+  activarAnimaciones = !activarAnimaciones; 
+    if(objeto_actual == 6){
+      activarAnimaciones = !activarAnimaciones;
+      if(activarAnimaciones){
+        objJerarquico->inicioAnimaciones( );
+        glutIdleFunc( funcion_desocupado );
+      }else{
+        glutIdleFunc( nullptr );
+      }
+
+    }else{
+      cout << "Este objeto no tiene animaciones" << endl; 
+    }
+        
+}
+
+
+void Escena::mgeDesocupado(){
+  if(objeto_actual == 6){
+    objJerarquico->actualizarEstado( );
+    glutPostRedisplay();
+  }
 }
 //**************************************************************************
 

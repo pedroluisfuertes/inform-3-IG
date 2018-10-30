@@ -18,7 +18,7 @@
 #include "esfera.h"
 #include "objPLY.h"
 
-constexpr int num_parametros = 4 ; // número de parámetros o grados de libertad
+constexpr int num_parametros = 6 ; // número de parámetros o grados de libertad
                                    // de este modelo
 
 
@@ -33,7 +33,7 @@ class GrafoParam
    void draw( const ModoVis p_modo_vis, const bool p_usar_diferido );
 
    // actualizar valor efectivo de un parámetro (a partir de su valor no acotado)
-   void actualizarValorEfe( const unsigned iparam, const float valor_na );
+   void actualizarValorEfe( const unsigned iparam, const float delta_valores_na, const bool crece );
 
    // devuelve el número de parámetros
    unsigned numParametros() { return num_parametros ; }
@@ -73,6 +73,14 @@ class GrafoParam
          rotacionBrazoPala, 
          alturaBrazo,
          rotacionBrazo;
+
+   const float ALTURA_MAX_PALA = ALTURA_BRAZO_MENOR - 0.5, 
+               ALTURA_MIN_PALA = 0.5,
+               MOV_MAX_BRAZO_VER = LONGITUD_BRAZO_HORIZONTAL - LONGITUD_BRAZO_HORIZONTAL / 3,
+               MOV_MIN_BRAZO_VER = LONGITUD_BRAZO_HORIZONTAL / 4,
+               ALTURA_MAX_BRAZO_HOR = ALTURA_GRUA,
+               ALTURA_MIN_BRAZO_HOR = 4;
+               
 
 } ;
 

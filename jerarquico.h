@@ -69,9 +69,6 @@ class ObjJerarquico
       // la última llamada a 'inicio_animaciones'
       Instante ultima_actu  ;
 
-      // vector de valores lineales de los parámetros
-      std::vector<float> valores_na ;
-
       // índice del parámetro o grado de libertad actual
       unsigned i_param_act = 0 ;
 

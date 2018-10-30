@@ -16,6 +16,19 @@ Grupo: 3º A3
 #include "esfera.h"
 #include "objPLY.h"
 
+   enum Objetos
+   {
+     CUBO = 0, 
+     TETRAEDRO = 1,
+     CILINDRO = 2,
+     CONO = 3,
+     ESFERA = 4,
+     OBJ_PLY = 5,
+     OBJ_REVOLUCION = 6,
+     OBJ_JERARQUICO = 7 
+
+   };
+
 class Escena
 {
 
@@ -38,8 +51,10 @@ class Escena
 	void change_projection( const float ratio_xy );
 	void change_observer();
 
-   int objeto_actual = 0 , // objeto actual (el que se visualiza)
-       num_objetos = 0   ; // número de objetos (actualizado al crear los objetos en el constructor)
+
+
+   int objeto_actual = 0; // objeto actual (el que se visualiza)
+   int num_objetos = 0; // número de objetos (actualizado al crear los objetos en el constructor)
 
    int num_modos = 0, 
        modo_actual = 0;
@@ -50,6 +65,7 @@ class Escena
    bool modo_diferido = false;
    bool leer_ply;
    bool es_ply;
+   bool activarAnimaciones = false; 
 
    // Objetos de la escena
    Cubo           * cubo            = nullptr;
@@ -67,6 +83,8 @@ class Escena
    // ......
    void leerPLY();
 
+   void conmutarAnimaciones();
+
    public:
 
    Escena();
@@ -79,6 +97,8 @@ class Escena
 	// Interacción con la escena
 	bool teclaPulsada( unsigned char Tecla1, int x, int y ) ;
 	void teclaEspecial( int Tecla1, int x, int y );
+
+   void mgeDesocupado(); 
 
 };
 #endif

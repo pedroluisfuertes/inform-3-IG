@@ -17,42 +17,104 @@ GrafoParam::GrafoParam()
 {
    cilindro = new Cilindro( 4, 16 );
    cubo     = new Cubo();
+
+   rotacionPala = 0; 
+   rotacionBrazo = 0; 
+   rotacionBrazoPala = 0; 
+   alturaPala = ALTURA_MIN_PALA;
+   movimientoPala = MOV_MIN_BRAZO_VER; 
+   alturaBrazo = ALTURA_MAX_BRAZO_HOR;   
 }
 // -----------------------------------------------------------------------------
 // actualizar valor efectivo de un parámetro (a partir de su valor no acotado)
 
-void GrafoParam::actualizarValorEfe( const unsigned iparam, const float valor_na )
+void GrafoParam::actualizarValorEfe( const unsigned iparam, const float delta_valores_na, const bool crece)
 {
    assert( iparam < num_parametros );
 
    using namespace std ;
-   //cout << "GrafoParam::actualizarValorEfe( " << iparam << ", " << valor_na << " )" << endl ;
-   int valorMinimo = 0;
-   int intervalo = 5;
 
    constexpr float vp = 2.5 ;
+
+   /*cout << "Valores actualizados Antes (Delta = " << delta_valores_na << "): " << endl; 
+   cout << "rotacionPala = " << rotacionPala << endl;
+   cout << "alturaPala = " << alturaPala << endl;
+   cout << "movimientoPala = " << movimientoPala << endl;
+   cout << "rotacionBrazoPala = " << rotacionBrazoPala << endl;
+   cout << "alturaBrazo = " << alturaBrazo << endl;
+   cout << "rotacionBrazo = " << rotacionBrazo << endl;*/
 
    switch( iparam )
    {
       case 0:
-         rotacionPala = sin( 2.0*M_PI*valor_na );
+      //cout << "rotacionPala" << endl;
+         if(crece)
+            rotacionPala +=  sin( M_PI*delta_valores_na / 45);
+         else
+            rotacionPala -= sin( M_PI*delta_valores_na / 45 );
          break ;
       case 1:
-         alturaPala = valorMinimo;
+      //cout << "alturaPala" << endl;
+         if(crece){
+            //cout << "Altura pala antes " << alturaPala <<endl;
+            alturaPala +=  delta_valores_na;
+            //cout << "Altura pala despues " << alturaPala <<endl;
+            //cout << "crece" << endl;
+         }
+         else{
+            alturaPala -= delta_valores_na;
+         }
+
+         if(alturaPala > ALTURA_MAX_PALA)
+            alturaPala = ALTURA_MAX_PALA;
+         else if(alturaPala < ALTURA_MIN_PALA)
+            alturaPala = ALTURA_MIN_PALA;
          break ;
       case 2:
-         movimientoPala = 4; 
+      //cout << "rotacionBrazoPala" << endl;
+         if(crece)
+            rotacionBrazoPala +=  sin( M_PI*delta_valores_na / 45 );
+         else
+            rotacionBrazoPala -= sin( M_PI*delta_valores_na / 45 );
          break ;
       case 3:
-         rotacionBrazoPala = sin( 2.0*M_PI*valor_na );
-         break ;
+      //cout << "movimientoPala" << endl;
+         if(crece)
+            movimientoPala +=  delta_valores_na;
+         else
+            movimientoPala -= delta_valores_na;
+         if(movimientoPala > MOV_MAX_BRAZO_VER)
+            movimientoPala = MOV_MAX_BRAZO_VER;
+         else if(movimientoPala < MOV_MIN_BRAZO_VER)
+            movimientoPala = MOV_MIN_BRAZO_VER;
+         break;
       case 4:
-         alturaBrazo = 10;
+      //cout << "rotacionBrazo" << endl;
+         if(crece)
+            rotacionBrazo +=  sin( M_PI*delta_valores_na / 45 );
+         else
+            rotacionBrazo -= sin( M_PI*delta_valores_na / 45 );
          break ;
       case 5:
-         rotacionBrazo  = sin( 2.0*M_PI*valor_na );
+      //cout << "alturaBrazo" << endl;
+         if(crece)
+            alturaBrazo +=  delta_valores_na;
+         else
+            alturaBrazo -= delta_valores_na;
+         if(alturaBrazo > ALTURA_MAX_BRAZO_HOR)
+            alturaBrazo = ALTURA_MAX_BRAZO_HOR;
+         else if(alturaBrazo < ALTURA_MIN_BRAZO_HOR)
+            alturaBrazo = ALTURA_MIN_BRAZO_HOR;
          break ;
    }
+
+   /*cout << "Valores actualizados (Delta = " << delta_valores_na << "): " << endl; 
+   cout << "rotacionPala = " << rotacionPala << endl;
+   cout << "alturaPala = " << alturaPala << endl;
+   cout << "movimientoPala = " << movimientoPala << endl;
+   cout << "rotacionBrazoPala = " << rotacionBrazoPala << endl;
+   cout << "alturaBrazo = " << alturaBrazo << endl;
+   cout << "rotacionBrazo = " << rotacionBrazo << endl << endl << endl << endl << endl;*/
 }
 
 // -----------------------------------------------------------------------------
@@ -100,13 +162,11 @@ void GrafoParam::draw( const ModoVis p_modo_vis, const bool p_usar_diferido )
       
 
       glPushMatrix();
-      // Barra Vertical Superior
-      glColor3f( 1, 1, 0.0 );
-      barraVerticalSuperior( );
+         // Barra Vertical Superior
+         glColor3f( 1, 1, 0.0 );
+         glScalef(0.07, 0.07, 0.07);
+         barraVerticalSuperior( );
       glPopMatrix();
-
-      
-
       glPopMatrix();
    
 }
@@ -205,7 +265,7 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
       // Varra Vertical Menor
       glColor3f( 1, 1, 0.0 );
       glTranslatef( movimientoPala, 0.0, 0.0 );
-      glRotatef( rotacionPala, 1.0, 0.0, 0.0 );
+      glRotatef( rotacionBrazoPala, 1.0, 0.0, 0.0 );
       barraVerticalMenor();
       glPopMatrix();
       
@@ -237,7 +297,7 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
          cubo->draw( modo_vis, usar_diferido );
       glPopMatrix();
 
-      glTranslatef( 0.0, 10, 0.0 );
+      //glTranslatef( 0.0, 10, 0.0 );
 
       glPushMatrix();
       // Barra Horizontal
