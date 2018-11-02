@@ -250,7 +250,6 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
 
 void Escena::conmutarAnimaciones(){
 
-  activarAnimaciones = !activarAnimaciones; 
     if(objeto_actual == 6){
       activarAnimaciones = !activarAnimaciones;
       if(activarAnimaciones){

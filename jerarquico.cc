@@ -134,20 +134,19 @@ void ObjJerarquico::actualizarEstado()
    // calcular el tiempo transcurrido desde la ultima actualización o
    // desde que se invocó a 'inicio_animaciones' (delta_t_s)
 
-   const Instante   ahora      = steady_clock::now() ;
-   const Duracion_s duracion_s = ahora - ultima_actu ;
-   const float      delta_t_s  = duracion_s.count();
+   const Instante   ahora       =  steady_clock::now();
+   const Duracion_s duracion_s  =  ahora - ultima_actu;
+   const float      delta_t_s   =  duracion_s.count() ;
 
-   //cout << "    Delta_t_s == " << delta_t_s << endl ;
+   cout << "    Delta_t_s == " << delta_t_s << endl ;
 
    // actualizar instante de la última actualización de estado
    ultima_actu = ahora ;
 
    // incrementar los valores lineales, y en el objparam, actualizar los valores efectivos
-
-   for( unsigned i = 0 ; i < num_parametros ; i++ )
+   float paso = 7; 
+   for( unsigned i = 0 ; i < num_parametros ; i += 2)
    {
-      //valores_na[i] += delta_t_s*delta_valores_na ;
-      //objparam->actualizarValorEfe( i, valores_na[i] );
+      objparam->actualizarValorEfe( i, delta_t_s, false );
    }
 }

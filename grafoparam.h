@@ -34,6 +34,7 @@ class GrafoParam
 
    // actualizar valor efectivo de un parámetro (a partir de su valor no acotado)
    void actualizarValorEfe( const unsigned iparam, const float delta_valores_na, const bool crece );
+   void actualizarValorEfe( const unsigned iparam, const float delta_valores_na, const bool crece, const float paso );
 
    // devuelve el número de parámetros
    unsigned numParametros() { return num_parametros ; }

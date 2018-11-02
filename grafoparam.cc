@@ -27,8 +27,11 @@ GrafoParam::GrafoParam()
 }
 // -----------------------------------------------------------------------------
 // actualizar valor efectivo de un parámetro (a partir de su valor no acotado)
-
 void GrafoParam::actualizarValorEfe( const unsigned iparam, const float delta_valores_na, const bool crece)
+{
+   actualizarValorEfe( iparam, delta_valores_na, crece, 7);
+}
+void GrafoParam::actualizarValorEfe( const unsigned iparam, const float delta_valores_na, const bool crece, const float paso)
 {
    assert( iparam < num_parametros );
 
@@ -43,26 +46,35 @@ void GrafoParam::actualizarValorEfe( const unsigned iparam, const float delta_va
    cout << "rotacionBrazoPala = " << rotacionBrazoPala << endl;
    cout << "alturaBrazo = " << alturaBrazo << endl;
    cout << "rotacionBrazo = " << rotacionBrazo << endl;*/
+   float delta; 
 
    switch( iparam )
    {
       case 0:
       //cout << "rotacionPala" << endl;
+      delta = (delta_valores_na * 360/paso);
          if(crece)
-            rotacionPala +=  sin( M_PI*delta_valores_na / 45);
+            rotacionPala += delta;
          else
-            rotacionPala -= sin( M_PI*delta_valores_na / 45 );
+            rotacionPala -= delta;
+
+         // Evita desbordamientos
+         if(rotacionPala > 360)
+            rotacionPala -= 360;
+         else if(rotacionPala < 0)
+            rotacionPala += 360;
          break ;
       case 1:
       //cout << "alturaPala" << endl;
+      delta = (ALTURA_MAX_PALA - ALTURA_MIN_PALA) / paso * delta_valores_na;
          if(crece){
             //cout << "Altura pala antes " << alturaPala <<endl;
-            alturaPala +=  delta_valores_na;
+            alturaPala +=  delta;
             //cout << "Altura pala despues " << alturaPala <<endl;
             //cout << "crece" << endl;
          }
          else{
-            alturaPala -= delta_valores_na;
+            alturaPala -= delta;
          }
 
          if(alturaPala > ALTURA_MAX_PALA)
@@ -72,17 +84,25 @@ void GrafoParam::actualizarValorEfe( const unsigned iparam, const float delta_va
          break ;
       case 2:
       //cout << "rotacionBrazoPala" << endl;
+      delta = (delta_valores_na * 360/paso);
          if(crece)
-            rotacionBrazoPala +=  sin( M_PI*delta_valores_na / 45 );
+            rotacionBrazoPala += delta;
          else
-            rotacionBrazoPala -= sin( M_PI*delta_valores_na / 45 );
+            rotacionBrazoPala -= delta;
+
+         // Evita desbordamientos
+         if(rotacionPala > 360)
+            rotacionPala -= 360;
+         else if(rotacionPala < 0)
+            rotacionPala += 360;
          break ;
       case 3:
       //cout << "movimientoPala" << endl;
+      delta = (MOV_MAX_BRAZO_VER - MOV_MIN_BRAZO_VER) / paso * delta_valores_na;
          if(crece)
-            movimientoPala +=  delta_valores_na;
+            movimientoPala +=  delta;
          else
-            movimientoPala -= delta_valores_na;
+            movimientoPala -= delta;
          if(movimientoPala > MOV_MAX_BRAZO_VER)
             movimientoPala = MOV_MAX_BRAZO_VER;
          else if(movimientoPala < MOV_MIN_BRAZO_VER)
@@ -90,17 +110,26 @@ void GrafoParam::actualizarValorEfe( const unsigned iparam, const float delta_va
          break;
       case 4:
       //cout << "rotacionBrazo" << endl;
+      delta = (delta_valores_na * 360/paso);
          if(crece)
-            rotacionBrazo +=  sin( M_PI*delta_valores_na / 45 );
+            rotacionBrazo += delta;
          else
-            rotacionBrazo -= sin( M_PI*delta_valores_na / 45 );
+            rotacionBrazo -= delta;
+
+         // Evita desbordamientos
+         if(rotacionPala > 360)
+            rotacionPala -= 360;
+         else if(rotacionPala < 0)
+            rotacionPala += 360;
+         break ;
          break ;
       case 5:
       //cout << "alturaBrazo" << endl;
+      delta = (ALTURA_MAX_BRAZO_HOR - ALTURA_MIN_BRAZO_HOR) / paso * delta_valores_na;
          if(crece)
-            alturaBrazo +=  delta_valores_na;
+            alturaBrazo +=  delta;
          else
-            alturaBrazo -= delta_valores_na;
+            alturaBrazo -= delta;
          if(alturaBrazo > ALTURA_MAX_BRAZO_HOR)
             alturaBrazo = ALTURA_MAX_BRAZO_HOR;
          else if(alturaBrazo < ALTURA_MIN_BRAZO_HOR)
