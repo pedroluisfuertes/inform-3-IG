@@ -48,12 +48,12 @@ bool sentidoPuntosAscendente = calcularSentidoPuntos(eje, perfil_original);
 pair<bool,bool> puntosTapas = calcularPuntosTapas(perfil_original, eje, sentidoPuntosAscendente);
 calcularPuntos(perfil_original, num_instancias_perf, eje, sentidoPuntosAscendente, puntosTapas);
 const int N  = forzarTapas(tapaSuperior, tapaInferior,  puntosTapas, perfil_original, eje, sentidoPuntosAscendente) ;
-//for (int i = 0; i < vertices.size(); i ++){
-  //cout << "Vertice " << i << endl; 
-  //cout << "  x = " << vertices[i](0) << endl;
-  //cout << "  y = " << vertices[i](1) << endl;
-  //cout << "  z = " << vertices[i](2) << endl << endl;
-//}
+for (int i = 0; i < vertices.size(); i ++){
+  cout << "Vertice " << i << endl; 
+  cout << "  x = " << vertices[i](0) << endl;
+  cout << "  y = " << vertices[i](1) << endl;
+  cout << "  z = " << vertices[i](2) << endl << endl;
+}
 generarTriangulos(puntosTapas, N, num_instancias_perf); 
 
 
@@ -113,7 +113,7 @@ int inicio, fin;
 
     for(int i = inicio; i < fin; i++){
       for(int j = 0; j < num_instancias_perf; j++){        
-        vertices.push_back(calcularPuntoRotado(perfil_original ,eje, i, 2*PI*j/num_instancias_perf));
+        vertices.push_back(calcularPuntoRotado(perfil_original ,eje, i, PI*j/(num_instancias_perf - 1)));
       }
     }
     if(puntosTapas.second) vertices.push_back(perfil_original[0]);
@@ -123,7 +123,7 @@ int inicio, fin;
     inicio = puntosTapas.first ? N - 2 : N - 1;
     for(int i = inicio; i >= fin; i--){
       for(int j = 0; j < num_instancias_perf; j++){
-        vertices.push_back(calcularPuntoRotado(perfil_original ,eje, i, 2*PI*j/num_instancias_perf));
+        vertices.push_back(calcularPuntoRotado(perfil_original ,eje, i, PI*j/(num_instancias_perf - 1)));
       }
     }
     if(puntosTapas.second) vertices.push_back(perfil_original[perfil_original.size() - 1]);
