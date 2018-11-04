@@ -138,7 +138,7 @@ void ObjJerarquico::actualizarEstado()
    const Duracion_s duracion_s  =  ahora - ultima_actu;
    const float      delta_t_s   =  duracion_s.count() ;
 
-   cout << "    Delta_t_s == " << delta_t_s << endl ;
+   //cout << "    Delta_t_s == " << delta_t_s << endl ;
 
    // actualizar instante de la última actualización de estado
    ultima_actu = ahora ;

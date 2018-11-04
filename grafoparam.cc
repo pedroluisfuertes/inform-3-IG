@@ -17,6 +17,8 @@ GrafoParam::GrafoParam()
 {
    cilindro = new Cilindro( 4, 16 );
    cubo     = new Cubo();
+   esfera   = new Esfera(4, 20);
+
 
    rotacionPala = 0; 
    rotacionBrazo = 0; 
@@ -227,6 +229,12 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
          glTranslatef(0,-0.25/2,0);
          glScalef( 0.35, 0.25, 0.35 );
          cilindro->draw( modo_vis, usar_diferido );
+      glPopMatrix();
+      // Esfera
+      glPushMatrix();
+         glScalef( 1, 2, 1 );
+         glTranslatef(4, 0, 0);
+         esfera->draw( modo_vis, usar_diferido );
       glPopMatrix();
       // Pala
       glPushMatrix();

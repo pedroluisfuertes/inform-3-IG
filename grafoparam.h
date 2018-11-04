@@ -55,6 +55,7 @@ class GrafoParam
 
    Cilindro * cilindro = nullptr ;
    Cubo *     cubo     = nullptr ;
+   Esfera *   esfera     = nullptr ;
 
    // parámetros de la llamada actual (o última) a 'draw'
    ModoVis modo_vis ;      // modo de visualización
