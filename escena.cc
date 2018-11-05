@@ -33,6 +33,7 @@ Escena::Escena()
     cono            = new Cono(4,4);
     esfera          = new Esfera(40,40);
     objJerarquico   = new ObjJerarquico();
+    circulo         = new Circulo(40,40);
     
 
     objeto_actual = 0; 
@@ -105,6 +106,8 @@ void Escena::dibujar_objeto_actual()
          leer_ply = true; 
          break;
       case 5:
+
+         if ( circulo != nullptr )    circulo->   draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
         /*if(leer_ply)
          if ( (es_ply && objPLY != nullptr) || (!es_ply && objRevolucion != nullptr) ){
           cout << "¿Quieres leer otro archivo PLY? (si/no)" << endl;

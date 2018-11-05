@@ -15,6 +15,7 @@ Grupo: 3º A3
 #include "cono.h"
 #include "esfera.h"
 #include "objPLY.h"
+#include "circulo.h"
 
    enum Objetos
    {
@@ -76,6 +77,7 @@ class Escena
    ObjPLY         * objPLY          = nullptr;
    ObjRevolucion  * objRevolucion   = nullptr;
    ObjJerarquico  * objJerarquico   = nullptr;
+   Circulo        * circulo         = nullptr; 
 
    // completar: añadir punteros a tetraedro u otros (práctica 1),
    //            y a un objeto PLY y de revolución (práctica 2),
