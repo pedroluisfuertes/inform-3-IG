@@ -61,7 +61,7 @@ generarTriangulos(puntosTapas, N, num_instancias_perf);
 }
 
 bool ObjRevolucion::calcularSentidoPuntos(int eje, const std::vector<Tupla3f> &tup){
-  return tup[0](eje) < tup[1](eje);
+  return tup[0](eje) < tup[tup.size() - 1](eje);
 }
 
 pair<bool,bool> ObjRevolucion::calcularPuntosTapas (const std::vector<Tupla3f> & perfil_original, const int eje, const bool sentidoPuntosAscendente){
