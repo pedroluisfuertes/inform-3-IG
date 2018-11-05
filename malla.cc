@@ -167,6 +167,7 @@ void ObjMallaIndexada::draw(ModoVis modo, bool modo_diferido, int color)
 {
 
   glEnable(GL_CULL_FACE);
+  colorear();
   if(modo_diferido)
     draw_ModoDiferido(modo, color);
   else
@@ -178,12 +179,24 @@ void ObjMallaIndexada::draw(ModoVis modo, bool modo_diferido, int color)
 void ObjMallaIndexada::colorear(){
   // Damos colores a los objetos, independeientemente del número de caras
   const std::vector<Tupla3f> colores_model = { { 1, 0, 0 }, { 0, 0, 1 }, { 0, 1, 1 } }; 
-    colores.resize(colores_model.size()); 
+    colores.resize(colores_model.size() + 1); 
     for(int i = 0; i < colores_model.size(); i++){
       for(int j = 0; j < vertices.size(); j++){
         colores[i].push_back(colores_model[i]); 
       }
     }
+    // Color aleatorio
+    Tupla3f color; 
+    for(int j = 0; j < vertices.size(); j++){
+      color[0] = (rand() % 100 + 1) / 100.0;
+      color[1] = (rand() % 100 + 1) / 100.0;
+      color[2] = (rand() % 100 + 1) / 100.0;
+      //cout << "color = " << color[0] << endl; 
+      //cout << "color = " << color[1] << endl; 
+      //cout << "color = " << color[2] << endl; 
+      colores[colores_model.size()].push_back(color); 
+    }
+
 }
 // -----------------------------------------------------------------------------
 // Recalcula la tabla de normales de vértices (el contenido anterior se pierde)

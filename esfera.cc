@@ -69,6 +69,4 @@ void Esfera::construir( const int num_vert_perfil, const int num_instancias_perf
 
 		crearMalla(perfil, num_instancias_perf, eje, false, false); 
 
-
-		colorear(); 
 }

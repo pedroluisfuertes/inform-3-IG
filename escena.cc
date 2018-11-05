@@ -39,7 +39,7 @@ Escena::Escena()
     num_objetos = 7 ; // se usa al pulsar la tecla 'O' (rotar objeto actual)
     num_modos = 4;  // se usa añ pulsar la letra 'm' 
 
-    num_colores = 3, 
+    num_colores = 4, 
     color_actual = 0;
     leer_ply = true;
     //num_texturas = 2; // se usa para cambiar las texturas 't'

@@ -56,5 +56,4 @@ void Cilindro::construir( const int num_vert_perfil, const int num_instancias_pe
 		
 
 		crearMalla(perfil, num_instancias_perf, eje, tapaSuperior,tapaInferior); 
-		colorear(); 
 }
