@@ -10,10 +10,12 @@ Grupo: 3º A3
 #include "malla.h"
 #include "jerarquico.h"
 #include "cubo.h"
+#include "yunque.h"
 #include "tetraedro.h"
 #include "cilindro.h"
 #include "cono.h"
 #include "esfera.h"
+#include "cuenco.h"
 #include "objPLY.h"
 
    enum Objetos
@@ -76,6 +78,8 @@ class Escena
    ObjPLY         * objPLY          = nullptr;
    ObjRevolucion  * objRevolucion   = nullptr;
    ObjJerarquico  * objJerarquico   = nullptr;
+   Yunque         * yunque          = nullptr; 
+   Cuenco         * cuenco          = nullptr;
 
    // completar: añadir punteros a tetraedro u otros (práctica 1),
    //            y a un objeto PLY y de revolución (práctica 2),

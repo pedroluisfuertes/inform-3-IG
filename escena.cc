@@ -32,7 +32,9 @@ Escena::Escena()
     cilindro        = new Cilindro(1,4);
     cono            = new Cono(4,4);
     esfera          = new Esfera(40,40);
+    cuenco          = new Cuenco(40,40);
     objJerarquico   = new ObjJerarquico();
+    yunque          = new Yunque(); 
     
 
     objeto_actual = 0; 
@@ -89,10 +91,10 @@ void Escena::dibujar_objeto_actual()
    switch( objeto_actual )
    {
       case Objetos::CUBO:
-         if ( cubo != nullptr )       cubo->      draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
+         if ( yunque != nullptr )       yunque->      draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
          break ;
       case 1:
-         if ( tetraedro != nullptr )  tetraedro-> draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
+         if ( cuenco != nullptr )  cuenco-> draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
          break;
       case 2:
          if ( cilindro != nullptr )   cilindro->  draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
@@ -128,8 +130,9 @@ void Escena::dibujar_objeto_actual()
          leer_ply = false; */
          break;
       case 6:
-           objJerarquico->draw((ModoVis) modo_actual, modo_diferido) ;
-        break;
+         if ( objJerarquico != nullptr )     objJerarquico->    draw((ModoVis) modo_actual, modo_diferido) ;
+        
+      break;
       default:
          cout << "draw_object: el número de objeto actual (" << objeto_actual << ") es incorrecto." << endl ;
          break ;
