@@ -144,7 +144,7 @@ int main( int argc, char **argv )
    glutSpecialFunc( special_keys );
 
    // Para evitar el degradado
-   glShadeModel( GL_FLAT ); 
+   //glShadeModel( GL_FLAT ); 
 
    // inicialización de librería GLEW (solo en Linux)
    #ifdef LINUX

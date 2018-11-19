@@ -22,11 +22,11 @@ ObjJerarquico::ObjJerarquico()
    delta_valores_na = 1; 
    // inicializar el valor no acotado de cada parámetro a 0, e
    // iniciaizar asimismo su valor efectivo.
-   for( unsigned i = 0 ; i < objparam->numParametros() ; i++ )
-   {
+   //for( unsigned i = 0 ; i < objparam->numParametros() ; i++ )
+   //{
       //valores_na.push_back( 0.0 );
       //objparam->actualizarValorEfe( i, valores_na[i] ) ;
-   }
+   //}
 }
 
 // -----------------------------------------------------------------------------

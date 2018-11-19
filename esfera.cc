@@ -45,15 +45,15 @@ void Esfera::construir( const int num_vert_perfil, const int num_instancias_perf
 
 				z = 0;
 				for(int i = 0; i < num_instancias_perf; i++){
-					y = radio * cos(PI/num_instancias_perf*i) + radio; // Para que esté sobre el plano XZ
-					x = radio * sin(PI/num_instancias_perf*i);
+					y = radio * cos(PI/(num_instancias_perf-1)*i); // Para que esté sobre el plano XZ
+					x = radio * sin(PI/(num_instancias_perf-1)*i);
 					vertice = {x,y,z}; 
 				  	perfil.push_back(vertice);
 
 				};
-				x = 0;
-				y = 0; 
-				vertice = {x,y,z}; 
+				//x = 0;
+				//y = 0; 
+				//vertice = {x,y,z}; 
 				perfil.push_back(vertice);
 
 			break; 
@@ -68,5 +68,5 @@ void Esfera::construir( const int num_vert_perfil, const int num_instancias_perf
 		
 
 		crearMalla(perfil, num_instancias_perf, eje, false, false); 
-
+   		inicializar();
 }

@@ -27,19 +27,19 @@ Escena::Escena()
     ejes.changeAxisSize( 5000 );
 
     // crear los objetos de las prácticas: Mallas o Jerárquicos....
-    cubo            = new Cubo();
-    tetraedro       = new Tetraedro();
+    //cubo            = new Cubo();
+    //tetraedro       = new Tetraedro();
     cilindro        = new Cilindro(1,4);
-    cono            = new Cono(4,4);
+    //cono            = new Cono(4,4);
     esfera          = new Esfera(40,40);
-    objJerarquico   = new ObjJerarquico();
+    //objJerarquico   = new ObjJerarquico();
     
 
     objeto_actual = 0; 
     num_objetos = 7 ; // se usa al pulsar la tecla 'O' (rotar objeto actual)
     num_modos = 4;  // se usa añ pulsar la letra 'm' 
 
-    num_colores = 4, 
+    num_colores = 5, 
     color_actual = 0;
     leer_ply = true;
     //num_texturas = 2; // se usa para cambiar las texturas 't'

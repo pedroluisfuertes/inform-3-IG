@@ -28,6 +28,7 @@ ObjRevolucion::ObjRevolucion( const std::string & nombre_ply_perfil )
       bool tapaInferior = true; 
       int eje = 1;
       crearMalla(perfil, num_instancias_perf, eje, tapaSuperior, tapaInferior); 
+      inicializar();
 }
 void ObjRevolucion::crearMalla( const std::vector<Tupla3f> & perfil_original, const int num_instancias_perf, const int eje, const bool tapaSuperior, const bool tapaInferior){
 

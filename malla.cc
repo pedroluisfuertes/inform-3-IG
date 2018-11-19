@@ -167,7 +167,6 @@ void ObjMallaIndexada::draw(ModoVis modo, bool modo_diferido, int color)
 {
 
   glEnable(GL_CULL_FACE);
-  colorear();
   if(modo_diferido)
     draw_ModoDiferido(modo, color);
   else
@@ -176,10 +175,15 @@ void ObjMallaIndexada::draw(ModoVis modo, bool modo_diferido, int color)
 
 }
 
+void ObjMallaIndexada::inicializar(){
+  calcular_normales(); 
+  colorear();
+}
+
 void ObjMallaIndexada::colorear(){
   // Damos colores a los objetos, independeientemente del número de caras
   const std::vector<Tupla3f> colores_model = { { 1, 0, 0 }, { 0, 0, 1 }, { 0, 1, 1 } }; 
-    colores.resize(colores_model.size() + 1); 
+    colores.resize(colores_model.size() + 2); 
     for(int i = 0; i < colores_model.size(); i++){
       for(int j = 0; j < vertices.size(); j++){
         colores[i].push_back(colores_model[i]); 
@@ -197,13 +201,59 @@ void ObjMallaIndexada::colorear(){
       colores[colores_model.size()].push_back(color); 
     }
 
+
+    for(int i= 0; i < normales_vertices.size(); i++){
+      color[0] = abs(normales_vertices[i](0)/3);
+      color[1] = abs(normales_vertices[i](1)/3);
+      color[2] = abs(normales_vertices[i](2)/3);
+      colores[colores_model.size() + 1].push_back(color); 
+    }
+    //colores[colores_model.size() + 1] = normales_vertices;
+
+
 }
 // -----------------------------------------------------------------------------
 // Recalcula la tabla de normales de vértices (el contenido anterior se pierde)
 
 void ObjMallaIndexada::calcular_normales()
 {
-   // completar .....(práctica 2)
+  for(int i = 0; i < vertices.size(); i++){
+    normales_vertices.push_back(Tupla3f(0,0,0));
+  }
+
+  //Calculamos las normales de las caras
+  for(int i = 0; i < triangulos.size(); i++){
+    // Calculamos el valor de la normal de la cara
+    Tupla3f a1 = vertices[triangulos[i](1)] - vertices[triangulos[i](0)],
+            a2 = vertices[triangulos[i](2)] - vertices[triangulos[i](0)],
+            n  = {a1(1) * a2(2) - a1(2) * a2(1),
+                  a1(0) * a2(2) - a1(2) * a2(0),
+                  a1(0) * a2(1) - a1(1) * a2(0)};
+
+    //Módulo
+    float m = sqrt(pow(n(0),2) + pow(n(1),2) + pow(n(2),2));
+
+    //Normalización e inserción
+    normales_triangulos.push_back(Tupla3f(n(0)/m, n(1)/m, n(2)/m));
+
+    //Valor del vértice
+    normales_vertices[triangulos[i](0)] = normales_vertices[triangulos[i](0)] + normales_triangulos[i];
+    normales_vertices[triangulos[i](1)] = normales_vertices[triangulos[i](1)] + normales_triangulos[i];
+    normales_vertices[triangulos[i](2)] = normales_vertices[triangulos[i](2)] + normales_triangulos[i];
+  }
+  
+  /*for(int j = 0; j < normales_triangulos.size(); j++){
+    cout << "Cara:" << triangulos[j](0) << "\tNormal cara (" << j << ") = " << normales_triangulos[j](0) << endl; 
+    cout << "Cara:" << triangulos[j](1) << "\tNormal cara (" << j << ") = " << normales_triangulos[j](1) << endl; 
+    cout << "Cara:" << triangulos[j](2) << "\tNormal cara (" << j << ") = " << normales_triangulos[j](2) << endl << endl; 
+  }
+
+  for(int j = 0; j < normales_vertices.size(); j++){
+      cout << "vertice = " << vertices[j](0) << "\tNormal vertice (" << j << ") = " << normales_vertices[j](0) << endl; 
+      cout << "vertice = " << vertices[j](1) << "\tNormal vertice (" << j << ") = " << normales_vertices[j](1) << endl; 
+      cout << "vertice = " << vertices[j](2) << "\tNormal vertice (" << j << ") = " << normales_vertices[j](2) << endl << endl; 
+    }*/
+
 }
 
 GLuint ObjMallaIndexada::CrearVBO( GLuint tipo_vbo, GLuint tamanio_bytes, GLvoid * puntero_ram )

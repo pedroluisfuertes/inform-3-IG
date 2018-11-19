@@ -9,7 +9,8 @@
 
 ObjPLY::ObjPLY( const std::string & nombre_archivo )
 {
-   // leer la lista de caras y vértices
-   ply::read( nombre_archivo, vertices, triangulos );
+    // leer la lista de caras y vértices
+    ply::read( nombre_archivo, vertices, triangulos );
+   	inicializar();
 
 }

@@ -51,14 +51,18 @@ class ObjMallaIndexada
 
    GLuint CrearVBO( GLuint tipo_vbo, GLuint tamanio_bytes, GLvoid * puntero_ram );
 
+   void setMaterial();
+
    protected:
 
    void calcular_normales() ; // calcula tabla de normales de vértices (práctica 3)
-   void colorear(); 
+   void inicializar(); 
 
    std::vector<Tupla3f> vertices ;   // tabla de coordenadas de vértices (una tupla por vértice, con tres floats)
    std::vector<Tupla3i> triangulos ; // una terna de 3 enteros por cada cara o triángulo
    std::vector<std::vector<Tupla3f> > colores ; // una terna de 3 enteros por cada cara o triángulo
+   std::vector<Tupla3f> normales_vertices;
+   std::vector<Tupla3f> normales_triangulos;
    
    GLuint id_vbo_vertices   = 0 ; // resultado: identificador de VBO de vertices
    GLuint id_vbo_triangulos = 0 ; // resultado: identificador de VBO de triángulos
@@ -66,6 +70,7 @@ class ObjMallaIndexada
 
    // completar: tabla de colores, tabla de normales de vértices
    private:
+   void colorear(); 
    void dibujaInmediato(int color); 
    void dibujaDiferido(int color); 
 
