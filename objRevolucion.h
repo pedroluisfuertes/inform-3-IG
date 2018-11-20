@@ -2,7 +2,7 @@
 #define __OBJREVOLUCION_H__
 
 #include "malla.h"
-#include "aux.h"
+//#include "aux.h"
 #include <utility>
 
 using namespace std;

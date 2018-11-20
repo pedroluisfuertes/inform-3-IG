@@ -15,8 +15,10 @@
 
 GrafoParam::GrafoParam()
 {
-   cilindro = new Cilindro( 4, 16 );
-   cubo     = new Cubo();
+   objetos.resize(2);
+
+   objetos[CUBO] = new Cubo();
+   objetos[CILINDRO] = new Cilindro( 4, 16 );
 
    rotacionPala = 0; 
    rotacionBrazo = 0; 
@@ -154,9 +156,6 @@ void GrafoParam::draw( const ModoVis p_modo_vis, const bool p_usar_diferido )
 {
    // asegurarnos que está inicializado ok
 
-   assert( cubo     != nullptr );
-   assert( cilindro != nullptr );
-
    // guardar parametros de visualización para esta llamada a 'draw'
    // (modo de visualización, modo de envío)
 
@@ -167,8 +166,8 @@ void GrafoParam::draw( const ModoVis p_modo_vis, const bool p_usar_diferido )
 
    constexpr float
       sep       = 1.5,  // separación entre centros de las columnas
-      radio_cil = 0.5 , // radio del cilindro más fino
-      radio_cil2 = radio_cil+0.1 ; // radio del cilindro más grueso
+      radio_cil = 0.5 , // radio del objetos[CILINDRO] más fino
+      radio_cil2 = radio_cil+0.1 ; // radio del objetos[CILINDRO] más grueso
 
    glPushMatrix();
       // primera columna
@@ -185,7 +184,7 @@ void GrafoParam::draw( const ModoVis p_modo_vis, const bool p_usar_diferido )
       glTranslatef( -radio_cil2, -0.1*radio_cil2, -radio_cil2 );
       glScalef( sep+2.0*radio_cil2, 0.1*radio_cil2, 2.0*radio_cil2 );
       glTranslatef( 0.5, 0.5, 0.5 );
-      cubo->draw( modo_vis, usar_diferido );*/
+      objetos[CUBO]->draw( modo_vis, usar_diferido );*/
 
       int longitudBrazoHorizontal = 15; 
       
@@ -201,7 +200,7 @@ void GrafoParam::draw( const ModoVis p_modo_vis, const bool p_usar_diferido )
 }
 // -----------------------------------------------------------------------------
 // dibuja un sub-objeto parametrizado:
-// es una columna (cilindro) de altura = 'altura', con un cubo encima,
+// es una columna (objetos[CILINDRO]) de altura = 'altura', con un objetos[CUBO] encima,
 // rotado entorno a Y un ángulo en grados = 'ag_rotacion'
 
 void GrafoParam::columna( const float altura, const float ag_rotacion,
@@ -211,12 +210,12 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
 
    glPushMatrix();
       glScalef( radio_cil, altura, radio_cil );
-      cilindro->draw( modo_vis, usar_diferido );
+      objetos[CILINDRO]->draw( modo_vis, usar_diferido );
    glPopMatrix();
    glPushMatrix( );
       glTranslatef( 0.0, 0.5+altura, 0.0 );
       glRotatef( ag_rotacion, 0.0, 1.0, 0.0 );
-      cubo->draw( modo_vis, usar_diferido );
+      objetos[CUBO]->draw( modo_vis, usar_diferido );
    glPopMatrix();
 }
 
@@ -226,20 +225,20 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
       glPushMatrix();
          glTranslatef(0,-0.25/2,0);
          glScalef( 0.35, 0.25, 0.35 );
-         cilindro->draw( modo_vis, usar_diferido );
+         objetos[CILINDRO]->draw( modo_vis, usar_diferido );
       glPopMatrix();
       // Pala
       glPushMatrix();
          glScalef( 1.2, 0.1, 1.2 );
          glTranslatef(4-0.6,0,0);
-         cubo->draw( modo_vis, usar_diferido );
+         objetos[CUBO]->draw( modo_vis, usar_diferido );
       glPopMatrix();
       // Brazo pala
       glPushMatrix();
          glTranslatef(4,0,0);
          glScalef( 4, 0.125, 0.125 );
          glRotatef( 90, 0.0, 0.0, 1.0 );
-         cilindro->draw( modo_vis, usar_diferido );
+         objetos[CILINDRO]->draw( modo_vis, usar_diferido );
       glPopMatrix();
    }
    void GrafoParam::barraVerticalMenor( ){
@@ -249,13 +248,13 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
          glTranslatef(0.5,0,0);
          glRotatef( 90, 0.0, 0.0, 1.0 );
          glScalef( 0.5, 1, 0.5 );
-         cilindro->draw( modo_vis, usar_diferido );
+         objetos[CILINDRO]->draw( modo_vis, usar_diferido );
       glPopMatrix();
       // Brazo
       glPushMatrix();
          glTranslatef(0,-ALTURA_BRAZO_MENOR,0);
          glScalef( 0.25, ALTURA_BRAZO_MENOR, 0.25 );
-         cilindro->draw( modo_vis, usar_diferido );
+         objetos[CILINDRO]->draw( modo_vis, usar_diferido );
       glPopMatrix();
 
       glTranslatef( 0.0, -ALTURA_BRAZO_MENOR, 0.0 );
@@ -274,20 +273,20 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
       glPushMatrix();
          glTranslatef(0, -0.5/2, 0);
          glScalef( 0.75, 0.5, 0.75 );
-         cilindro->draw( modo_vis, usar_diferido );
+         objetos[CILINDRO]->draw( modo_vis, usar_diferido );
       glPopMatrix();
       // Barra
       glPushMatrix();
          glTranslatef(3*LONGITUD_BRAZO_HORIZONTAL/4, 0, 0);
          glRotatef( 90, 0.0, 0.0, 1.0 );
          glScalef( 0.25, LONGITUD_BRAZO_HORIZONTAL, 0.25 );
-         cilindro->draw( modo_vis, usar_diferido );
+         objetos[CILINDRO]->draw( modo_vis, usar_diferido );
       glPopMatrix();
       // Contrapeso
       glPushMatrix();
          glTranslatef(-LONGITUD_BRAZO_HORIZONTAL/4, 0, 0);
          glScalef( 0.75, 0.75, 0.75 );
-         cubo->draw( modo_vis, usar_diferido );
+         objetos[CUBO]->draw( modo_vis, usar_diferido );
       glPopMatrix();
 
       glPushMatrix();
@@ -306,24 +305,24 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
          glPushMatrix();
             glTranslatef(0, ALTURA_GRUA, 0);
             glScalef( 1, 0.05, 1);
-            cilindro->draw( modo_vis, usar_diferido );
+            objetos[CILINDRO]->draw( modo_vis, usar_diferido );
          glPopMatrix();
          // Apoyo
          glPushMatrix();
             glScalef( 0.75, 1, 0.75 );
-            cilindro->draw( modo_vis, usar_diferido );
+            objetos[CILINDRO]->draw( modo_vis, usar_diferido );
          glPopMatrix();
          // Barra
          glPushMatrix();
             glScalef( 0.5, ALTURA_GRUA, 0.5 );
-            cilindro->draw( modo_vis, usar_diferido );
+            objetos[CILINDRO]->draw( modo_vis, usar_diferido );
          glPopMatrix();
       glPopMatrix();
       // Base
       glPushMatrix();
          glTranslatef(0, 1, 0);
          glScalef( 3, 2, 3 );
-         cubo->draw( modo_vis, usar_diferido );
+         objetos[CUBO]->draw( modo_vis, usar_diferido );
       glPopMatrix();
 
       //glTranslatef( 0.0, 10, 0.0 );
@@ -337,3 +336,15 @@ void GrafoParam::columna( const float altura, const float ag_rotacion,
       glPopMatrix();
 
    }
+   void GrafoParam::siguienteColor( ){
+      for(Objeto *objeto:objetos){
+         objeto->siguienteColor( );
+      }
+   }
+
+   void GrafoParam::siguienteMaterial( ){
+      for(Objeto *objeto:objetos){
+         objeto->siguienteMaterial( );
+      }
+   }
+   

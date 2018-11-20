@@ -25,25 +25,35 @@ Escena::Escena()
     Observer_angle_y  = 0.0 ;
 
     ejes.changeAxisSize( 5000 );
-
-    // crear los objetos de las prácticas: Mallas o Jerárquicos....
-    //cubo            = new Cubo();
-    //tetraedro       = new Tetraedro();
-    cilindro        = new Cilindro(1,4);
-    //cono            = new Cono(4,4);
-    esfera          = new Esfera(40,40);
-    //objJerarquico   = new ObjJerarquico();
-    
-
-    objeto_actual = 0; 
-    num_objetos = 7 ; // se usa al pulsar la tecla 'O' (rotar objeto actual)
-    num_modos = 4;  // se usa añ pulsar la letra 'm' 
-
-    num_colores = 5, 
-    color_actual = 0;
-    leer_ply = true;
     //num_texturas = 2; // se usa para cambiar las texturas 't'
-    modo_diferido = false; 
+
+    objetos.resize(num_objetos);
+    // crear los objetos de las prácticas: Mallas o Jerárquicos....
+    objetos[CUBO] = new Cubo();
+    objetos[TETRAEDRO] = new Tetraedro();
+    objetos[CILINDRO] = new Cilindro(1,4);
+    objetos[CONO] = new Cono(1,4);
+    objetos[ESFERA] = new Esfera(40,40);
+    objetos[OBJ_JERARQUICO] = new ObjJerarquico();
+
+    /* Creamos las luces */
+    // Luz 1    
+    GLenum  luz_indice = GL_LIGHT0; // ïndice de la funte de luz, entre GL_LIGHT0 y GL_LIGHT7
+    Tupla4f luz_posicion  = { 0.0, 0.0, 1.0, 1.0 };
+    Tupla4f luz_ambiente  = { 0.0, 0.0, 0.0, 1.0 };
+    Tupla4f luz_difusa    = { 1.0, 1.0, 1.0, 1.0 };
+    Tupla4f luz_especular = { 1.0, 1.0, 1.0, 1.0 };
+    luz1 = new Luz(luz_indice, luz_posicion, luz_ambiente, luz_difusa, luz_especular); 
+
+    // Luz 2
+    luz_indice = GL_LIGHT1; // ïndice de la funte de luz, entre GL_LIGHT0 y GL_LIGHT7
+    luz_posicion  = { 0.0, 0.0, 1.0, 1.0 };
+    luz_ambiente  = { 0.0, 0.0, 0.0, 1.0 };
+    luz_difusa    = { 1.0, 0.0, 1.0, 1.0 };
+    luz_especular = { 1.0, 0.0, 1.0, 1.0 };
+    luz2 = new Luz(luz_indice, luz_posicion, luz_ambiente, luz_difusa, luz_especular);
+
+ 
 }
 
 //**************************************************************************
@@ -76,67 +86,19 @@ void Escena::dibujar_objeto_actual()
 {
    using namespace std ;
 
-   // (1) configurar OpenGL para el modo actual (puntos/lineas/sólido)
-   //    llamar glPolygonMode, glColor... (y alguna cosas más), según dicho modo
-   // .........completar (práctica 1)
-
-    // Definimos la textura
-    
-
-   // (2) dibujar el objeto actual usando método 'draw' del objeto asociado al
-   // valor entero en 'objeto_actual'
-
-   switch( objeto_actual )
-   {
-      case Objetos::CUBO:
-         if ( cubo != nullptr )       cubo->      draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
-         break ;
-      case 1:
-         if ( tetraedro != nullptr )  tetraedro-> draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
-         break;
-      case 2:
-         if ( cilindro != nullptr )   cilindro->  draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
-         break;
-      case 3:
-         if ( cono != nullptr )       cono->      draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
-         break;
-      case 4:
-         if ( esfera != nullptr )     esfera->    draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
-         leer_ply = true; 
-         break;
-      case 5:
-        /*if(leer_ply)
-         if ( (es_ply && objPLY != nullptr) || (!es_ply && objRevolucion != nullptr) ){
-          cout << "¿Quieres leer otro archivo PLY? (si/no)" << endl;
-          string respues;
-          getline (cin,respues);
-          if(respues.find("s") != string::npos){
-            cout << "Introduzca el nombre del archivo PLY que desa cargar" << endl;
-            leerPLY();
-          }
-         }   
-         else{
-            cout << "Introduzca el nombre del archivo PLY que desa cargar" << endl;
-            leerPLY();
-         }
-         if(es_ply){
-           objPLY->       draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
-         }
-         else{
-           objRevolucion->draw((ModoVis) modo_actual, modo_diferido, color_actual) ;
-         }
-         leer_ply = false; */
-         break;
-      case 6:
-           objJerarquico->draw((ModoVis) modo_actual, modo_diferido) ;
-        break;
-      default:
-         cout << "draw_object: el número de objeto actual (" << objeto_actual << ") es incorrecto." << endl ;
-         break ;
+   if(objeto_actual == OBJ_JERARQUICO){
+    if(leer_ply)
+      leerPLY();
+   }else{
+    leer_ply = true; 
    }
+
+    objetos[objeto_actual]-> draw((ModoVis) modo_actual, modo_diferido);
 }
 
 void Escena::leerPLY(){
+    
+    cout << "Introduzca el nombre del archivo PLY que desa cargar" << endl;
 
     unsigned
       num_vertices = 0,
@@ -153,13 +115,11 @@ void Escena::leerPLY(){
 
     ply::leer_cabecera(ruta, num_vertices, num_caras);
     if(num_caras > 0){
-      objPLY = new ObjPLY(ruta);
-      es_ply = true; 
+      objetos[OBJ_JERARQUICO] = new ObjPLY(ruta);
     }else{
-      objRevolucion = new ObjRevolucion(ruta);
-
-      es_ply = false; 
+      objetos[OBJ_JERARQUICO] = new ObjRevolucion(ruta);
     }
+    leer_ply = false;
 
     
 }
@@ -206,7 +166,6 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
          cout << "Objeto actual == " << objeto_actual << endl ;
          break ;
       case 'm' :
-      case 'M' :
          modo_actual = (modo_actual+1) % num_modos ;
          cout << "Modo actual == " << modo_actual << endl ;
          break ;
@@ -220,28 +179,59 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
       break ;
       case 'c' :
       case 'C' :
-        color_actual = (color_actual+1) % num_colores ;
-        cout << "Color actual == " << color_actual << endl ;
+        objetos[objeto_actual]->siguienteColor();
+      break ;
+      case 'M' :
+        objetos[objeto_actual]->siguienteMaterial();
       break ;
       case 'p' :
       case 'P' :
-        objJerarquico->siguienteParametro();
+        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->siguienteParametro();
       break ;
       case 'a' :
       case 'A' :
         conmutarAnimaciones(); 
       break ;
+      case 'j' :
+      case 'J' :
+        luz1->activar();
+      break ;
+      case 'k' :
+      case 'K' :
+        luz2->activar();
+      break ;
       case 'Z' :
-        objJerarquico->incrementaParamAct();
+        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->incrementaParamAct();
       break ;
       case 'z' :
-        objJerarquico->decrementaParamAct();
+        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->decrementaParamAct();
       break ;
       case '>' :
-        objJerarquico->decelerar();
+        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->decelerar();
       break ;
       case '<' :
-        objJerarquico->acelerar();
+        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->acelerar();
+      break ;
+      case '1' :
+        objeto_actual = CUBO;
+      break ;
+      case '2' :
+        objeto_actual = TETRAEDRO;
+      break ;
+      case '3' :
+        objeto_actual = CILINDRO;
+      break ;
+      case '4' :
+        objeto_actual = CONO;
+      break ;
+      case '5' :
+        objeto_actual = ESFERA;
+      break ;
+      case '6' :
+        objeto_actual = OBJ_PLY;
+      break ;
+      case '7' :
+        objeto_actual = OBJ_JERARQUICO;
       break ;
       
    }
@@ -250,10 +240,10 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
 
 void Escena::conmutarAnimaciones(){
 
-    if(objeto_actual == 6){
+    if(objeto_actual == OBJ_JERARQUICO){
       activarAnimaciones = !activarAnimaciones;
       if(activarAnimaciones){
-        objJerarquico->inicioAnimaciones( );
+        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->inicioAnimaciones( );
         glutIdleFunc( funcion_desocupado );
       }else{
         glutIdleFunc( nullptr );
@@ -265,10 +255,9 @@ void Escena::conmutarAnimaciones(){
         
 }
 
-
 void Escena::mgeDesocupado(){
   if(objeto_actual == 6){
-    objJerarquico->actualizarEstado( );
+    static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->actualizarEstado( );
     glutPostRedisplay();
   }
 }

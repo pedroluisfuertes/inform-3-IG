@@ -39,7 +39,15 @@ class GrafoParam
    // devuelve el número de parámetros
    unsigned numParametros() { return num_parametros ; }
 
+   void siguienteColor();
+   void siguienteMaterial();
+
    private:
+   enum ObjetosGrafo
+   {
+     CUBO = 0, 
+     CILINDRO = 1
+   };
 
    // métodos de dibujo de subgrafos
    void columna( const float altura, const float ag_rotacion,
@@ -52,9 +60,7 @@ class GrafoParam
 
 
    // objetos tipo malla indexada (nodos terminales)
-
-   Cilindro * cilindro = nullptr ;
-   Cubo *     cubo     = nullptr ;
+   std::vector<Objeto*> objetos;
 
    // parámetros de la llamada actual (o última) a 'draw'
    ModoVis modo_vis ;      // modo de visualización

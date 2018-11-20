@@ -13,6 +13,7 @@
 #include <chrono>
 #include "malla.h"
 #include "grafoparam.h"
+#include "objeto.h"
 
 // tipo para registrar instantes de tiempo
 typedef std::chrono::time_point<std::chrono::steady_clock> Instante ;
@@ -21,7 +22,7 @@ typedef std::chrono::time_point<std::chrono::steady_clock> Instante ;
 typedef std::chrono::duration<float,std::ratio<1,1>> Duracion_s ;
 
 
-class ObjJerarquico
+class ObjJerarquico : public Objeto
 {
    public:
       // inicialización: crear mallas indexadas, inicialización de parámetros
@@ -60,6 +61,10 @@ class ObjJerarquico
       // (solo se debe invocar con las animaciones activadas)
       // (no usa ninguna orden de OpenGL)
       void actualizarEstado();
+
+      void activarMaterial();
+      void siguienteColor();
+      void siguienteMaterial(); 
 
    private:
       // puntero al objeto con el grafo de escena

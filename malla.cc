@@ -19,7 +19,36 @@ Grupo: 3º A3
 
 using namespace std;
 
-void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo, int color)
+ObjMallaIndexada::ObjMallaIndexada(){
+  
+  /* Materiales por defecto */
+  //Material 1
+  Tupla3f ambiente  = {  0.3,  0.3,  0.3 };
+  Tupla3f difusa    = {  0.1,  0.1,  0.1 };
+  Tupla3f especular = { 0.05, 0.05, 0.05 };
+  float brillo = 1;
+  materiales.push_back(Material(ambiente, difusa,especular,brillo));
+
+  //Material 2
+  ambiente  = {  0.3,  0.3,  0.3 };
+  difusa    = {  0.8,  0.8,  0.8 };
+  especular = { 0.05, 0.05, 0.05 };
+  brillo = 1;
+  materiales.push_back(Material(ambiente, difusa,especular,brillo));
+
+  //Material 3
+  ambiente  = {  0.3,  0.3,  0.3 };
+  difusa    = {  0.2,  0.2,  0.2 };
+  especular = {  0.6,  0.6,  0.6 };
+  brillo = 1;
+  materiales.push_back(Material(ambiente, difusa,especular,brillo));
+
+  activarMaterial();
+ 
+}
+
+
+void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo)
 {   
 
     // habilitar uso de un array de vértices
@@ -33,11 +62,11 @@ void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo, int color)
    {
       case SOLIDO:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Solido
-        dibujaInmediato(color);
+        dibujaInmediato();
       break ;
       case LINEAS:
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Con líneas
-        dibujaInmediato(color);
+        dibujaInmediato();
         break;
       case PUNTOS:
         glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); // Con puntos
@@ -45,7 +74,7 @@ void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo, int color)
         //glEnable(GL_POINT_SMOOTH); // Para que se vean redondos
         //glHint(GL_POINT_SMOOTH_HINT, GL_NICEST); 
         //glEnable(GL_BLEND);
-        dibujaInmediato(color);
+        dibujaInmediato();
       break;
       case AJEDREZ:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Solido
@@ -58,7 +87,7 @@ void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo, int color)
         */
         glEnableClientState( GL_COLOR_ARRAY );
         
-        glColorPointer( 3, GL_FLOAT, 0, colores[color].data());
+        glColorPointer( 3, GL_FLOAT, 0, colores[colorActivo].data());
 
         std::vector<Tupla3i> triangulos1 ; // una terna de 3 enteros por cada cara o triángulo
         std::vector<Tupla3i> triangulos2 ; // una terna de 3 enteros por cada cara o triángulo
@@ -71,7 +100,7 @@ void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo, int color)
         }
 
         glDrawElements( GL_TRIANGLES, triangulos1.size()*3, GL_UNSIGNED_INT, triangulos1.data() );
-        glColorPointer( 3, GL_FLOAT, 0, colores[(color + 1)%colores.size()].data());
+        glColorPointer( 3, GL_FLOAT, 0, colores[(colorActivo + 1)%colores.size()].data());
         glDrawElements( GL_TRIANGLES, triangulos2.size()*3, GL_UNSIGNED_INT, triangulos2.data() );
         glDisableClientState(GL_COLOR_ARRAY);
       break ;
@@ -82,11 +111,11 @@ void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo, int color)
     glDisableClientState( GL_VERTEX_ARRAY );
 }
 
-void ObjMallaIndexada::dibujaInmediato(int color){
+void ObjMallaIndexada::dibujaInmediato(){
   // visualizar, indicando: tipo de primitiva, número de índices,
       // tipo de los índices, y dirección de la tabla de índices
       glEnableClientState( GL_COLOR_ARRAY );
-      glColorPointer( 3, GL_FLOAT, 0, colores[color].data());
+      glColorPointer( 3, GL_FLOAT, 0, colores[colorActivo].data());
       glDrawElements( GL_TRIANGLES, triangulos.size()*3, GL_UNSIGNED_INT, triangulos.data() );
       glDisableClientState(GL_COLOR_ARRAY);
 }
@@ -94,22 +123,22 @@ void ObjMallaIndexada::dibujaInmediato(int color){
 // -----------------------------------------------------------------------------
 // Visualización en modo diferido con 'glDrawElements' (usando VBOs)
 
-void ObjMallaIndexada::draw_ModoDiferido(ModoVis modo, int color)
+void ObjMallaIndexada::draw_ModoDiferido(ModoVis modo)
 { 
 
    switch( modo )
    {
       case SOLIDO:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Solido
-        dibujaDiferido(color);
+        dibujaDiferido();
       break ;
        case LINEAS:
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Solido
-        dibujaDiferido(color);
+        dibujaDiferido();
       break ;
        case PUNTOS:
         glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); // Solido
-        dibujaDiferido(color);
+        dibujaDiferido();
       break ;
       case AJEDREZ:
         //cout << "No soportado para el modo diferido" << endl;
@@ -118,7 +147,7 @@ void ObjMallaIndexada::draw_ModoDiferido(ModoVis modo, int color)
     
 
 }
-void ObjMallaIndexada::dibujaDiferido(int color){
+void ObjMallaIndexada::dibujaDiferido(){
 
   if(!id_vbo_vertices) // Si el VBO no existe, lo creamos
       id_vbo_vertices   = CrearVBO(GL_ARRAY_BUFFER,         3*vertices.size()*sizeof(float),          vertices.data());        
@@ -127,7 +156,7 @@ void ObjMallaIndexada::dibujaDiferido(int color){
       id_vbo_triangulos = CrearVBO(GL_ELEMENT_ARRAY_BUFFER, 3*triangulos.size()*sizeof(unsigned int), triangulos.data());        
     
     if(!id_vbo_colores) // Si el VBO no existe, lo creamos
-      id_vbo_colores    = CrearVBO(GL_ARRAY_BUFFER,         3*colores[0].size()*sizeof(float),        colores[color].data());        
+      id_vbo_colores    = CrearVBO(GL_ARRAY_BUFFER,         3*colores[0].size()*sizeof(float),        colores[colorActivo].data());        
     
 
     // especificar localización y formato de la tabla de vértices, habilitar tabla
@@ -153,24 +182,20 @@ void ObjMallaIndexada::dibujaDiferido(int color){
     glDisableClientState( GL_VERTEX_ARRAY );
 
 }
-void ObjMallaIndexada::draw(ModoVis modo, bool modo_diferido)
-{
 
-	draw(modo, modo_diferido, 0); 
-}
 
 // -----------------------------------------------------------------------------
 // Función de visualización de la malla,
 // puede llamar a  draw_ModoInmediato o bien a draw_ModoDiferido
 
-void ObjMallaIndexada::draw(ModoVis modo, bool modo_diferido, int color)
+void ObjMallaIndexada::draw(ModoVis modo, bool modo_diferido)
 {
 
   glEnable(GL_CULL_FACE);
   if(modo_diferido)
-    draw_ModoDiferido(modo, color);
+    draw_ModoDiferido(modo);
   else
-    draw_ModoInmediato(modo, color);
+    draw_ModoInmediato(modo);
 
 
 }
@@ -203,9 +228,9 @@ void ObjMallaIndexada::colorear(){
 
 
     for(int i= 0; i < normales_vertices.size(); i++){
-      color[0] = abs(normales_vertices[i](0)/3);
-      color[1] = abs(normales_vertices[i](1)/3);
-      color[2] = abs(normales_vertices[i](2)/3);
+      color[0] = abs(normales_vertices[i](0));
+      color[1] = abs(normales_vertices[i](1));
+      color[2] = abs(normales_vertices[i](2));
       colores[colores_model.size() + 1].push_back(color); 
     }
     //colores[colores_model.size() + 1] = normales_vertices;
@@ -221,6 +246,7 @@ void ObjMallaIndexada::calcular_normales()
     normales_vertices.push_back(Tupla3f(0,0,0));
   }
 
+  std::vector<int> m_vertices(vertices.size(), 0);
   //Calculamos las normales de las caras
   for(int i = 0; i < triangulos.size(); i++){
     // Calculamos el valor de la normal de la cara
@@ -236,13 +262,28 @@ void ObjMallaIndexada::calcular_normales()
     //Normalización e inserción
     normales_triangulos.push_back(Tupla3f(n(0)/m, n(1)/m, n(2)/m));
 
+    // Cuenta el número de aritas que tiene el vertice
+    m_vertices[triangulos[i](0)] += 1;
+    m_vertices[triangulos[i](1)] += 1;
+    m_vertices[triangulos[i](2)] += 1;
+
     //Valor del vértice
     normales_vertices[triangulos[i](0)] = normales_vertices[triangulos[i](0)] + normales_triangulos[i];
     normales_vertices[triangulos[i](1)] = normales_vertices[triangulos[i](1)] + normales_triangulos[i];
     normales_vertices[triangulos[i](2)] = normales_vertices[triangulos[i](2)] + normales_triangulos[i];
   }
+
+  // Normalizamos el valor de las normales de ls vertices
+  for(int i = 0; i < m_vertices.size(); i++){
+    normales_vertices[i] = normales_vertices[i]/m_vertices[i];
+  }
+
+  /*for(int i = 0; i < m_vertices.size(); i++){
+
+    cout << "vertice (" << i << "): " << m_vertices[i]<< endl;
+  }
   
-  /*for(int j = 0; j < normales_triangulos.size(); j++){
+  for(int j = 0; j < normales_triangulos.size(); j++){
     cout << "Cara:" << triangulos[j](0) << "\tNormal cara (" << j << ") = " << normales_triangulos[j](0) << endl; 
     cout << "Cara:" << triangulos[j](1) << "\tNormal cara (" << j << ") = " << normales_triangulos[j](1) << endl; 
     cout << "Cara:" << triangulos[j](2) << "\tNormal cara (" << j << ") = " << normales_triangulos[j](2) << endl << endl; 
@@ -255,6 +296,25 @@ void ObjMallaIndexada::calcular_normales()
     }*/
 
 }
+void ObjMallaIndexada::siguienteColor(){
+  colorActivo = (++colorActivo) % colores.size();
+  cout << "Color activo = " << colorActivo << endl; 
+
+}
+
+void ObjMallaIndexada::siguienteMaterial(){
+  materialActivo = (++materialActivo) % materiales.size();
+  cout << "Material activo = " << materialActivo << endl; 
+  activarMaterial();
+}
+
+void ObjMallaIndexada::activarMaterial(){
+  glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,  (GLfloat *) &materiales[materialActivo].difusa);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR, (GLfloat *) &materiales[materialActivo].especular);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,  (GLfloat *) &materiales[materialActivo].ambiente);
+  glMaterialf( GL_FRONT_AND_BACK,GL_SHININESS, materiales[materialActivo].brillo);
+}
+
 
 GLuint ObjMallaIndexada::CrearVBO( GLuint tipo_vbo, GLuint tamanio_bytes, GLvoid * puntero_ram )
 {

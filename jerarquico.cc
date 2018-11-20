@@ -150,3 +150,14 @@ void ObjJerarquico::actualizarEstado()
       objparam->actualizarValorEfe( i, delta_t_s, false );
    }
 }
+
+
+void ObjJerarquico::siguienteColor( )
+{
+   objparam->siguienteColor();
+}
+
+void ObjJerarquico::siguienteMaterial( )
+{
+   objparam->siguienteMaterial();
+}

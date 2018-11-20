@@ -6,6 +6,7 @@ Grupo: 3º A3
 #ifndef _ESCENA_H
 #define _ESCENA_H
 
+#include "objeto.h"
 #include "ejes.h"
 #include "malla.h"
 #include "jerarquico.h"
@@ -16,7 +17,14 @@ Grupo: 3º A3
 #include "esfera.h"
 #include "objPLY.h"
 
-   enum Objetos
+#include "luz.h"
+
+
+class Escena
+{
+
+   private:
+    enum Objetos
    {
      CUBO = 0, 
      TETRAEDRO = 1,
@@ -24,15 +32,9 @@ Grupo: 3º A3
      CONO = 3,
      ESFERA = 4,
      OBJ_PLY = 5,
-     OBJ_REVOLUCION = 6,
-     OBJ_JERARQUICO = 7 
+     OBJ_JERARQUICO = 6 
 
    };
-
-class Escena
-{
-
-   private:
 
    Ejes ejes;
 
@@ -51,36 +53,24 @@ class Escena
 	void change_projection( const float ratio_xy );
 	void change_observer();
 
-
-
    int objeto_actual = 0; // objeto actual (el que se visualiza)
-   int num_objetos = 0; // número de objetos (actualizado al crear los objetos en el constructor)
+   int num_objetos = 7; // número de objetos (actualizado al crear los objetos en el constructor)
 
-   int num_modos = 0, 
+   int num_modos = 4, 
        modo_actual = 0;
 
-   int num_colores = 0, 
-       color_actual = 0;
+   int color_actual = 0;
 
    bool modo_diferido = false;
-   bool leer_ply;
-   bool es_ply;
+   bool leer_ply = true;
    bool activarAnimaciones = false; 
 
    // Objetos de la escena
-   Cubo           * cubo            = nullptr;
-   Tetraedro      * tetraedro       = nullptr;
-   Cilindro       * cilindro        = nullptr;
-   Cono           * cono            = nullptr;
-   Esfera         * esfera          = nullptr;
-   ObjPLY         * objPLY          = nullptr;
-   ObjRevolucion  * objRevolucion   = nullptr;
-   ObjJerarquico  * objJerarquico   = nullptr;
+   std::vector<Objeto*> objetos;
 
-   // completar: añadir punteros a tetraedro u otros (práctica 1),
-   //            y a un objeto PLY y de revolución (práctica 2),
-   //           y a un objeto jerarquico (práctica 3).
-   // ......
+   Luz * luz1 = nullptr; 
+   Luz * luz2 = nullptr; 
+
    void leerPLY();
 
    void conmutarAnimaciones();
@@ -98,7 +88,7 @@ class Escena
 	bool teclaPulsada( unsigned char Tecla1, int x, int y ) ;
 	void teclaEspecial( int Tecla1, int x, int y );
 
-   void mgeDesocupado(); 
+  void mgeDesocupado(); 
 
 };
 #endif
