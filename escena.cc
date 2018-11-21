@@ -39,7 +39,7 @@ Escena::Escena()
     /* Creamos las luces */
     // Luz 1    
     GLenum  luz_indice = GL_LIGHT0; // ïndice de la funte de luz, entre GL_LIGHT0 y GL_LIGHT7
-    Tupla4f luz_posicion  = { 0.0, 0.0, 1.0, 1.0 };
+    Tupla4f luz_posicion  = { 0.0, 0.0, 1.0, 0.0 }; // W  = 0 ==> luz en el infinito
     Tupla4f luz_ambiente  = { 0.0, 0.0, 0.0, 1.0 };
     Tupla4f luz_difusa    = { 1.0, 1.0, 1.0, 1.0 };
     Tupla4f luz_especular = { 1.0, 1.0, 1.0, 1.0 };
@@ -47,7 +47,7 @@ Escena::Escena()
 
     // Luz 2
     luz_indice = GL_LIGHT1; // ïndice de la funte de luz, entre GL_LIGHT0 y GL_LIGHT7
-    luz_posicion  = { 0.0, 0.0, 1.0, 1.0 };
+    luz_posicion  = { 0.0, 0.0, 4.0, 1.0 }; // w != 1 ==> Luz no en el infinito
     luz_ambiente  = { 0.0, 0.0, 0.0, 1.0 };
     luz_difusa    = { 1.0, 0.0, 1.0, 1.0 };
     luz_especular = { 1.0, 0.0, 1.0, 1.0 };
@@ -86,14 +86,14 @@ void Escena::dibujar_objeto_actual()
 {
    using namespace std ;
 
-   if(objeto_actual == OBJ_JERARQUICO){
-    if(leer_ply)
-      leerPLY();
+   if(objeto_actual == OBJ_PLY){
+      if(leer_ply)
+        leerPLY();
    }else{
-    leer_ply = true; 
-   }
-
+      leer_ply = true;
+  }
     objetos[objeto_actual]-> draw((ModoVis) modo_actual, modo_diferido);
+  
 }
 
 void Escena::leerPLY(){
@@ -115,9 +115,9 @@ void Escena::leerPLY(){
 
     ply::leer_cabecera(ruta, num_vertices, num_caras);
     if(num_caras > 0){
-      objetos[OBJ_JERARQUICO] = new ObjPLY(ruta);
+      objetos[OBJ_PLY] = new ObjPLY(ruta);
     }else{
-      objetos[OBJ_JERARQUICO] = new ObjRevolucion(ruta);
+      objetos[OBJ_PLY] = new ObjRevolucion(ruta);
     }
     leer_ply = false;
 
@@ -135,7 +135,7 @@ void Escena::dibujar()
 {
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // Limpiar la pantalla
 	change_observer();
-   ejes.draw();
+  ejes.draw();
 	dibujar_objeto_actual();
 }
 
@@ -192,6 +192,14 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
       case 'A' :
         conmutarAnimaciones(); 
       break ;
+      case 'u' :
+      case 'U' :
+        glShadeModel(GL_FLAT);
+      break;
+      case 'y' :
+      case 'Y' :
+        glShadeModel(GL_SMOOTH);
+      break;
       case 'j' :
       case 'J' :
         luz1->activar();
@@ -233,33 +241,48 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
       case '7' :
         objeto_actual = OBJ_JERARQUICO;
       break ;
+      case '!' :
+        modo_actual = 0;
+      break ;
+      case '"' :
+        modo_actual = 3;
+      break ;
+      case '#' :
+        glShadeModel(GL_FLAT);
+      break ;
+      case '$' :
+        glShadeModel(GL_SMOOTH);
+      break ;
+      case '%' :
+      break ;
+      case '&' :
+      break ;
+      case '/' :
+      break ;
       
    }
    return false ;
 }
 
 void Escena::conmutarAnimaciones(){
-
-    if(objeto_actual == OBJ_JERARQUICO){
-      activarAnimaciones = !activarAnimaciones;
-      if(activarAnimaciones){
+    activarAnimaciones = !activarAnimaciones;
+    if(activarAnimaciones){
+      if(objeto_actual == OBJ_JERARQUICO){
         static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->inicioAnimaciones( );
-        glutIdleFunc( funcion_desocupado );
-      }else{
-        glutIdleFunc( nullptr );
       }
-
+        glutIdleFunc( funcion_desocupado );
+        luz2->inicioGiro();
     }else{
-      cout << "Este objeto no tiene animaciones" << endl; 
+      glutIdleFunc( nullptr );
     }
-        
 }
 
 void Escena::mgeDesocupado(){
-  if(objeto_actual == 6){
+  if(objeto_actual == OBJ_JERARQUICO){
     static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->actualizarEstado( );
-    glutPostRedisplay();
   }
+  luz2->gira();
+    glutPostRedisplay();
 }
 //**************************************************************************
 
@@ -287,7 +310,7 @@ void Escena::teclaEspecial( int Tecla1, int x, int y )
          break;
 	}
 
-	//std::cout << Observer_distance << std::endl;
+	//std::cout << "Tecla especial " << Tecla1 << std::endl;
 }
 
 //**************************************************************************

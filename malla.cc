@@ -21,26 +21,38 @@ using namespace std;
 
 ObjMallaIndexada::ObjMallaIndexada(){
   
+  Tupla3f ambiente  ;
+  Tupla3f difusa    ;
+  Tupla3f especular ;
+  float brillo      ;
+
   /* Materiales por defecto */
   //Material 1
-  Tupla3f ambiente  = {  0.3,  0.3,  0.3 };
-  Tupla3f difusa    = {  0.1,  0.1,  0.1 };
-  Tupla3f especular = { 0.05, 0.05, 0.05 };
-  float brillo = 1;
+  ambiente  = {  0.3,  0.3,  0.3 };
+  difusa    = {  0.1,  0.1,  0.1 };
+  especular = { 0.05, 0.05, 0.05 };
+  brillo    = 1;
   materiales.push_back(Material(ambiente, difusa,especular,brillo));
 
   //Material 2
   ambiente  = {  0.3,  0.3,  0.3 };
   difusa    = {  0.8,  0.8,  0.8 };
   especular = { 0.05, 0.05, 0.05 };
-  brillo = 1;
+  brillo    = 1;
   materiales.push_back(Material(ambiente, difusa,especular,brillo));
 
   //Material 3
   ambiente  = {  0.3,  0.3,  0.3 };
-  difusa    = {  0.2,  0.2,  0.2 };
+  difusa    = {  0.1,  0.1,  0.1 };
   especular = {  0.6,  0.6,  0.6 };
-  brillo = 1;
+  brillo    = 1;
+  materiales.push_back(Material(ambiente, difusa,especular,brillo));
+
+  //Material 4
+  ambiente  = {  0.3,  0.3,  0.3 };
+  difusa    = {  1.0,  1.0,  1.0 };
+  especular = {  1.0,  1.0,  1.0 };
+  brillo    = 1;
   materiales.push_back(Material(ambiente, difusa,especular,brillo));
 
   activarMaterial();
@@ -51,12 +63,15 @@ ObjMallaIndexada::ObjMallaIndexada(){
 void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo)
 {   
 
-    // habilitar uso de un array de vértices
-    glEnableClientState( GL_VERTEX_ARRAY );
-
     // indicar el formato y la dirección de memoria del array de vértices
     // (son tuplas de 3 valores float, sin espacio entre ellas)
     glVertexPointer( 3, GL_FLOAT, 0, vertices.data() ) ;
+    glNormalPointer( GL_FLOAT, 0, normales_vertices.data() ) ;
+
+    // habilitar uso de un array de vértices
+    glEnableClientState( GL_VERTEX_ARRAY );
+    glEnableClientState( GL_NORMAL_ARRAY );
+    glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
     switch( modo )
    {
@@ -109,6 +124,9 @@ void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo)
 
     // deshabilitar array de vértices
     glDisableClientState( GL_VERTEX_ARRAY );
+    glDisableClientState( GL_NORMAL_ARRAY );
+    glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+
 }
 
 void ObjMallaIndexada::dibujaInmediato(){

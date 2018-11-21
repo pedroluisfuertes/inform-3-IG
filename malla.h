@@ -72,6 +72,7 @@ class ObjMallaIndexada:public Objeto
    std::vector<std::vector<Tupla3f> > colores ; // una terna de 3 enteros por cada cara o triángulo
    std::vector<Tupla3f> normales_vertices;
    std::vector<Tupla3f> normales_triangulos;
+   std::vector<Tupla3f> coordenadas_texturas_vertices;
    std::vector<Material> materiales;
    int materialActivo = 0;
    int colorActivo = 0;
