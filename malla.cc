@@ -55,7 +55,6 @@ ObjMallaIndexada::ObjMallaIndexada(){
   brillo    = 1;
   materiales.push_back(Material(ambiente, difusa,especular,brillo));
 
-  activarMaterial();
  
 }
 
@@ -210,6 +209,8 @@ void ObjMallaIndexada::draw(ModoVis modo, bool modo_diferido)
 {
 
   glEnable(GL_CULL_FACE);
+ activarMaterial();
+  
   if(modo_diferido)
     draw_ModoDiferido(modo);
   else

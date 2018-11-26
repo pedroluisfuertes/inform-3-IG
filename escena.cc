@@ -18,6 +18,7 @@ using namespace std;
 
 Escena::Escena()
 {
+  
     Front_plane       = 0.1;
     Back_plane        = 2000.0;
     Observer_distance = 2.0;
@@ -133,6 +134,7 @@ void Escena::leerPLY(){
 
 void Escena::dibujar()
 {
+  glEnable( GL_NORMALIZE );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // Limpiar la pantalla
 	change_observer();
   ejes.draw();
@@ -282,7 +284,7 @@ void Escena::mgeDesocupado(){
     static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->actualizarEstado( );
   }
   luz2->gira();
-    glutPostRedisplay();
+  glutPostRedisplay();
 }
 //**************************************************************************
 
