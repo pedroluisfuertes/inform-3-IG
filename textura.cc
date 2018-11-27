@@ -67,3 +67,7 @@ void Textura::desactivarTexturas(){
     glDisableClientState( GL_TEXTURE_COORD_ARRAY );
     glDisable( GL_TEXTURE_2D );
 }
+
+std::vector<Tupla2f> Textura::get_coordenadas_texturas_vertices(){
+  return coordenadas_texturas_vertices; 
+}

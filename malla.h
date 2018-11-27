@@ -42,6 +42,7 @@ class ObjMallaIndexada:public Objeto
    void draw( ModoVis modo, bool modo_diferido);
 
    GLuint CrearVBO( GLuint tipo_vbo, GLuint tamanio_bytes, GLvoid * puntero_ram );
+   void eliminarVBO(GLuint id);
 
    void activarMaterial();
    void siguienteColor();
@@ -72,16 +73,17 @@ class ObjMallaIndexada:public Objeto
    std::vector<Tupla3i> triangulos ; // una terna de 3 enteros por cada cara o triángulo
    std::vector<std::vector<Tupla3f> > colores ; // una terna de 3 enteros por cada cara o triángulo
    std::vector<Tupla3f> normales_vertices;
-   std::vector<Tupla3f> normales_triangulos;
    std::vector<Material> materiales;
    std::vector<Textura> texturas;
    int materialActivo = 0;
    int colorActivo = 0;
+   int colorActivoAntDif = 0; 
    int texturaActiva = 0; 
    
    GLuint id_vbo_vertices   = 0 ; // resultado: identificador de VBO de vertices
    GLuint id_vbo_triangulos = 0 ; // resultado: identificador de VBO de triángulos
-   GLuint id_vbo_colores = 0 ; // resultado: identificador de VBO de triángulos
+   GLuint id_vbo_colores = 0 ; // resultado: identificador de VBO de colores
+   GLuint id_vbo_normales = 0 ; // resultado: identificador de VBO de normales
 
 
 

@@ -78,22 +78,28 @@ void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo)
     switch( modo )
    {
       case SOLIDO:
+        //cout << "Modo solido" << endl;
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Solido
         dibujaInmediato();
       break ;
       case LINEAS:
+        //cout << "Modo lineas" << endl;
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Con líneas
         dibujaInmediato();
         break;
       case PUNTOS:
+        //cout << "Modo puntos" << endl;
         glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); // Con puntos
         glPointSize(8); // Cambiamos el tamaño de los puntos para que se vean mejor
-        //glEnable(GL_POINT_SMOOTH); // Para que se vean redondos
-        //glHint(GL_POINT_SMOOTH_HINT, GL_NICEST); 
-        //glEnable(GL_BLEND);
+        glEnable(GL_POINT_SMOOTH); // Para que se vean redondos
+        glHint(GL_POINT_SMOOTH_HINT, GL_NICEST); 
+        glEnable(GL_BLEND);
         dibujaInmediato();
+        glDisable(GL_BLEND);
+        glDisable(GL_POINT_SMOOTH);
       break;
       case AJEDREZ:
+        //cout << "Modo ajedrez" << endl;
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Solido
         /*
         void glColorPointer(  GLint size, GLenum type, GLsizei stride, const GLvoid * pointer);
@@ -104,7 +110,7 @@ void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo)
         */
         glEnableClientState( GL_COLOR_ARRAY );
         
-        glColorPointer( 3, GL_FLOAT, 0, colores[colorActivo].data());
+        
 
         std::vector<Tupla3i> triangulos1 ; // una terna de 3 enteros por cada cara o triángulo
         std::vector<Tupla3i> triangulos2 ; // una terna de 3 enteros por cada cara o triángulo
@@ -115,8 +121,9 @@ void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo)
           else
             triangulos2.push_back(triangulos[i]);
         }
-
+        glColorPointer( 3, GL_FLOAT, 0, colores[colorActivo].data());
         glDrawElements( GL_TRIANGLES, triangulos1.size()*3, GL_UNSIGNED_INT, triangulos1.data() );
+        glColorPointer( 3, GL_FLOAT, 0, colores[(colorActivo + 1) % colores.size()].data());
         glDrawElements( GL_TRIANGLES, triangulos2.size()*3, GL_UNSIGNED_INT, triangulos2.data() );
         glDisableClientState(GL_COLOR_ARRAY);
       break ;
@@ -144,11 +151,13 @@ void ObjMallaIndexada::dibujaInmediato(){
           //glDrawArrays(GL_QUADS, 0, 4);
           Textura::desactivarTexturas();
           //glutSwapBuffers();
-        }else{
+        }else if (!glIsEnabled(GL_LIGHTING)){
           glEnableClientState( GL_COLOR_ARRAY );
           glColorPointer( 3, GL_FLOAT, 0, colores[colorActivo].data());
           glDrawElements( GL_TRIANGLES, triangulos.size()*3, GL_UNSIGNED_INT, triangulos.data() );
           glDisableClientState(GL_COLOR_ARRAY);
+        }else{
+          glDrawElements( GL_TRIANGLES, triangulos.size()*3, GL_UNSIGNED_INT, triangulos.data() );
         }
       
 }
@@ -188,29 +197,84 @@ void ObjMallaIndexada::dibujaDiferido(){
     if(!id_vbo_triangulos) // Si el VBO no existe, lo creamos
       id_vbo_triangulos = CrearVBO(GL_ELEMENT_ARRAY_BUFFER, 3*triangulos.size()*sizeof(unsigned int), triangulos.data());        
     
-    if(!id_vbo_colores) // Si el VBO no existe, lo creamos
-      id_vbo_colores    = CrearVBO(GL_ARRAY_BUFFER,         3*colores[0].size()*sizeof(float),        colores[colorActivo].data());        
+    if(!id_vbo_colores || colorActivoAntDif!=colorActivo){
+      if(colorActivoAntDif!=colorActivo)
+        eliminarVBO(id_vbo_colores);
+      id_vbo_colores    = CrearVBO(GL_ARRAY_BUFFER,         3*colores[0].size()*sizeof(float),        colores[colorActivo].data());    
+      colorActivoAntDif = colorActivo;    
+    }
     
-
+    if(!id_vbo_normales)
+      id_vbo_normales    = CrearVBO(GL_ARRAY_BUFFER,       3*normales_vertices.size()*sizeof(float), normales_vertices.data()); 
+    
     // especificar localización y formato de la tabla de vértices, habilitar tabla
     glBindBuffer( GL_ARRAY_BUFFER, id_vbo_vertices );  // activar VBO de vértices
     glVertexPointer( 3, GL_FLOAT, 0, 0 );              // especifica formato y offset (=0)
     glBindBuffer( GL_ARRAY_BUFFER, 0 );                // desactivar VBO de vértices.
     glEnableClientState( GL_VERTEX_ARRAY );            // habilitar tabla de vértices
     
-    // Colores
-    glBindBuffer( GL_ARRAY_BUFFER, id_vbo_colores ); // activar VBO de colores     
-    glColorPointer( 3, GL_FLOAT, 0, 0);              // 
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );              // Desactivar el VBO de colores 
-    glEnableClientState( GL_COLOR_ARRAY );           // Habili
+
+    if (!glIsEnabled(GL_LIGHTING) && texturas.empty()){
+      // Colores
+      glBindBuffer( GL_ARRAY_BUFFER, id_vbo_colores ); // activar VBO de colores     
+      glColorPointer( 3, GL_FLOAT, 0, 0);              // 
+      glBindBuffer( GL_ARRAY_BUFFER, 0 );              // Desactivar el VBO de colores 
+      glEnableClientState( GL_COLOR_ARRAY );           // Habili      glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_vbo_triangulos );// activar VBO de triángulos  
+
+      glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_vbo_triangulos );// activar VBO de triángulos 
+      glDrawElements( GL_TRIANGLES, triangulos.size()*3, GL_UNSIGNED_INT, 0 ) ; // Pintar el array de triángulos
+      glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 ); // desactivar VBO de triángulos      // Desactivamos el array de colores
+      glDisableClientState(GL_COLOR_ARRAY); 
+    }else{
+      if(!glIsEnabled(GL_LIGHTING)){
+        //Texturas
+        glColor3f(1,1,1);
+        texturas[texturaActiva].activar();
+        Textura::activarTexturas();
+
+        //Triángulos
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_vbo_triangulos );// activar VBO de triángulos 
+        glDrawElements( GL_TRIANGLES, triangulos.size()*3, GL_UNSIGNED_INT, 0 ) ; // Pintar el array de triángulos
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 ); // desactivar VBO de triángulos      // Desactivamos el array de colores
+        Textura::desactivarTexturas();
+      }else if(texturas.empty()){
+        //Luces
+        glBindBuffer( GL_ARRAY_BUFFER, id_vbo_normales ); // activar VBO de colores     
+        glNormalPointer( GL_FLOAT, 0, 0);              // 
+        glBindBuffer( GL_ARRAY_BUFFER, 0 );              // Desactivar el VBO de colores 
+        glEnableClientState( GL_NORMAL_ARRAY );           // Habili      glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_vbo_triangulos );// activar VBO de triángulos  
+
+        //Triángulos
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_vbo_triangulos );// activar VBO de triángulos 
+        glDrawElements( GL_TRIANGLES, triangulos.size()*3, GL_UNSIGNED_INT, 0 ) ; // Pintar el array de triángulos
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 ); // desactivar VBO de triángulos      // Desactivamos el array de colores
+        glDisableClientState(GL_NORMAL_ARRAY); 
+        
+      }else{
+        //Textures y luces
+        //Normales
+        glBindBuffer( GL_ARRAY_BUFFER, id_vbo_normales ); // activar VBO de colores     
+        glNormalPointer( GL_FLOAT, 0, 0);              // 
+        glBindBuffer( GL_ARRAY_BUFFER, 0 );              // Desactivar el VBO de colores 
+        glEnableClientState( GL_NORMAL_ARRAY );           // Habili      glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_vbo_triangulos );// activar VBO de triángulos  
+
+        //Texturas
+        glColor3f(1,1,1);
+        texturas[texturaActiva].activar();
+        Textura::activarTexturas();
+
+        //Triángulos
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_vbo_triangulos );// activar VBO de triángulos 
+        glDrawElements( GL_TRIANGLES, triangulos.size()*3, GL_UNSIGNED_INT, 0 ) ; // Pintar el array de triángulos
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 ); // desactivar VBO de triángulos      // Desactivamos el array de colores
+        glDisableClientState(GL_NORMAL_ARRAY); 
+        Textura::desactivarTexturas();
+
+      }
+    }
 
 
-    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_vbo_triangulos );// activar VBO de triángulos  
-    glDrawElements( GL_TRIANGLES, triangulos.size()*3, GL_UNSIGNED_INT, 0 ) ; // Pintar el array de triángulos
-    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 ); // desactivar VBO de triángulos
-
-    // Desactivamos el array de colores
-    glDisableClientState(GL_COLOR_ARRAY); 
+    
     // desactivar uso de array de vértices
     glDisableClientState( GL_VERTEX_ARRAY );
 
@@ -252,9 +316,9 @@ void ObjMallaIndexada::colorear(){
     // Color aleatorio
     Tupla3f color; 
     for(int j = 0; j < vertices.size(); j++){
-      color[0] = (rand() % 100 + 1) / 100.0;
-      color[1] = (rand() % 100 + 1) / 100.0;
-      color[2] = (rand() % 100 + 1) / 100.0;
+      color[0] = (rand() % 10000 + 1) / 10000.0;
+      color[1] = (rand() % 10000 + 1) / 10000.0;
+      color[2] = (rand() % 10000 + 1) / 10000.0;
       //cout << "color = " << color[0] << endl; 
       //cout << "color = " << color[1] << endl; 
       //cout << "color = " << color[2] << endl; 
@@ -277,6 +341,7 @@ void ObjMallaIndexada::colorear(){
 
 void ObjMallaIndexada::calcular_normales()
 {
+  std::vector<Tupla3f> normales_triangulos;
   for(int i = 0; i < vertices.size(); i++){
     normales_vertices.push_back(Tupla3f(0,0,0));
   }
@@ -363,4 +428,8 @@ GLuint ObjMallaIndexada::CrearVBO( GLuint tipo_vbo, GLuint tamanio_bytes, GLvoid
     glBindBuffer( tipo_vbo, 0 ); // desactivación del VBO (activar 0)
 
     return id_vbo ; // devolver el identificador resultado
+}
+
+void ObjMallaIndexada::eliminarVBO(GLuint id){
+  glDeleteBuffers(1, &id);
 }

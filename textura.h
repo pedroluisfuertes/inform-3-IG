@@ -21,7 +21,8 @@ class Textura {
 		Textura(const char *filename, std::vector<Tupla2f> coordenadas_texturas_vertices);
 		void activar(); 
 		static void activarTexturas(); 
-		static void desactivarTexturas(); 
+		static void desactivarTexturas();
+		std::vector<Tupla2f> get_coordenadas_texturas_vertices();
 
 
 };
