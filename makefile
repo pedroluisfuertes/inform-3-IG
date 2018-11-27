@@ -24,10 +24,11 @@ cc_flags_macos  := -DMACOS
 cc_flags        := $(cc_flags_common) $(if $(en_linux), $(cc_flags_linux), $(cc_flags_macos))
 
 glu_flag_macos  := /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGLU.dylib
-ld_libs_common := -ljpeg
+ld_libs_common := -ljpeg 
 ld_libs_linux  := -lGLEW -lGLU -lglut -lGL
 ld_libs_macos  := -framework OpenGL -framework GLUT $(glu_flag_macos)
 ld_libs        := $(ld_libs_common) $(if $(en_linux), $(ld_libs_linux), $(ld_libs_macos))
+LIBS :=-L/usr/X11R6/lib/ -lGL -lGLU -lglut -lm -lX11 -lpthread
 
 
 x: $(exe)
@@ -35,7 +36,7 @@ x: $(exe)
 	./$(exe)
 
 $(exe): $(units_o) makefile
-	$(compiler) -o $(exe)  $(units_o) $(ld_libs)
+	$(compiler) -o $(exe)  $(units_o) $(ld_libs) -I $(LIBS)
 
 %.o : %.cc
 	$(compiler) -c  $(cc_flags) $<

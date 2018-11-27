@@ -6,6 +6,7 @@ Grupo: 3º A3
 #include "aux.h"
 #include "ply_reader.h"
 #include "malla.h"
+#include "textura.h"
 #include "iostream"
 #include <math.h>
 
@@ -65,12 +66,14 @@ void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo)
     // indicar el formato y la dirección de memoria del array de vértices
     // (son tuplas de 3 valores float, sin espacio entre ellas)
     glVertexPointer( 3, GL_FLOAT, 0, vertices.data() ) ;
-    glNormalPointer( GL_FLOAT, 0, normales_vertices.data() ) ;
+    if(glIsEnabled(GL_LIGHTING)){
+      glNormalPointer( GL_FLOAT, 0, normales_vertices.data() ) ;
+      glEnableClientState( GL_NORMAL_ARRAY );
+    }
+    
 
     // habilitar uso de un array de vértices
     glEnableClientState( GL_VERTEX_ARRAY );
-    glEnableClientState( GL_NORMAL_ARRAY );
-    glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
     switch( modo )
    {
@@ -114,7 +117,6 @@ void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo)
         }
 
         glDrawElements( GL_TRIANGLES, triangulos1.size()*3, GL_UNSIGNED_INT, triangulos1.data() );
-        glColorPointer( 3, GL_FLOAT, 0, colores[(colorActivo + 1)%colores.size()].data());
         glDrawElements( GL_TRIANGLES, triangulos2.size()*3, GL_UNSIGNED_INT, triangulos2.data() );
         glDisableClientState(GL_COLOR_ARRAY);
       break ;
@@ -123,18 +125,32 @@ void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo)
 
     // deshabilitar array de vértices
     glDisableClientState( GL_VERTEX_ARRAY );
-    glDisableClientState( GL_NORMAL_ARRAY );
-    glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-
+    if(glIsEnabled(GL_LIGHTING))
+      glDisableClientState( GL_NORMAL_ARRAY );
+      
 }
 
 void ObjMallaIndexada::dibujaInmediato(){
   // visualizar, indicando: tipo de primitiva, número de índices,
       // tipo de los índices, y dirección de la tabla de índices
-      glEnableClientState( GL_COLOR_ARRAY );
-      glColorPointer( 3, GL_FLOAT, 0, colores[colorActivo].data());
-      glDrawElements( GL_TRIANGLES, triangulos.size()*3, GL_UNSIGNED_INT, triangulos.data() );
-      glDisableClientState(GL_COLOR_ARRAY);
+        if(!texturas.empty()){
+          glColor3f(1,1,1);
+          //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+          //glMatrixMode(GL_MODELVIEW);
+          //glLoadIdentity();
+          texturas[texturaActiva].activar();
+          Textura::activarTexturas();
+          glDrawElements( GL_TRIANGLES, triangulos.size()*3, GL_UNSIGNED_INT, triangulos.data() );
+          //glDrawArrays(GL_QUADS, 0, 4);
+          Textura::desactivarTexturas();
+          //glutSwapBuffers();
+        }else{
+          glEnableClientState( GL_COLOR_ARRAY );
+          glColorPointer( 3, GL_FLOAT, 0, colores[colorActivo].data());
+          glDrawElements( GL_TRIANGLES, triangulos.size()*3, GL_UNSIGNED_INT, triangulos.data() );
+          glDisableClientState(GL_COLOR_ARRAY);
+        }
+      
 }
 
 // -----------------------------------------------------------------------------

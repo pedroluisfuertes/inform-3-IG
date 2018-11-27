@@ -16,6 +16,7 @@ Grupo: 3º A3
 #include "cono.h"
 #include "esfera.h"
 #include "objPLY.h"
+#include "cuadro.h"
 
 #include "luz.h"
 
@@ -46,7 +47,7 @@ class Escena
 
   // Objetos de la escena
     int objeto_actual = 0; // objeto actual (el que se visualiza)
-    int num_objetos = 7; // número de objetos 
+    int num_objetos = 8; // número de objetos 
     enum Objetos
     {
      CUBO = 0, 
@@ -55,7 +56,8 @@ class Escena
      CONO = 3,
      ESFERA = 4,
      OBJ_PLY = 5,
-     OBJ_JERARQUICO = 6 
+     OBJ_JERARQUICO = 6,
+     CUADRO = 7
 
     };
     std::vector<Objeto*> objetos;

@@ -30,12 +30,7 @@ Escena::Escena()
 
     objetos.resize(num_objetos);
     // crear los objetos de las prácticas: Mallas o Jerárquicos....
-    objetos[CUBO] = new Cubo();
-    objetos[TETRAEDRO] = new Tetraedro();
-    objetos[CILINDRO] = new Cilindro(1,4);
-    objetos[CONO] = new Cono(1,4);
-    objetos[ESFERA] = new Esfera(40,40);
-    objetos[OBJ_JERARQUICO] = new ObjJerarquico();
+    
 
     /* Creamos las luces */
     // Luz 1    
@@ -68,6 +63,13 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
 	glClearColor( 1.0, 1.0, 1.0, 1.0 );// se indica cual sera el color para limpiar la ventana	(r,v,a,al)
 
 	glEnable( GL_DEPTH_TEST );	// se habilita el z-bufer
+    objetos[CUBO] = new Cubo();
+    objetos[TETRAEDRO] = new Tetraedro();
+    objetos[CILINDRO] = new Cilindro(1,4);
+    objetos[CONO] = new Cono(1,4);
+    objetos[ESFERA] = new Esfera(40,40);
+    objetos[OBJ_JERARQUICO] = new ObjJerarquico();
+    objetos[CUADRO] = new Cuadro();
 
 	/*Width  = UI_window_width/10;
 	Height = UI_window_height/10;
@@ -93,6 +95,8 @@ void Escena::dibujar_objeto_actual()
    }else{
       leer_ply = true;
   }
+//objetos[CUADRO] = new Cuadro();
+
     objetos[objeto_actual]-> draw((ModoVis) modo_actual, modo_diferido);
   
 }
@@ -137,7 +141,12 @@ void Escena::dibujar()
   glEnable( GL_NORMALIZE );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // Limpiar la pantalla
 	change_observer();
+  bool lucesEncendidas = glIsEnabled(GL_LIGHTING);
+  if(lucesEncendidas)
+    glDisable(GL_LIGHTING);
   ejes.draw();
+  if(lucesEncendidas)
+    glEnable(GL_LIGHTING);
 	dibujar_objeto_actual();
 }
 
@@ -164,7 +173,7 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
       case 'o' :
       case 'O' :
          // activar siguiente objeto
-         objeto_actual = (objeto_actual+1) % num_objetos ;
+         objeto_actual = (objeto_actual+1) % objetos.size() ;
          cout << "Objeto actual == " << objeto_actual << endl ;
          break ;
       case 'm' :
@@ -242,6 +251,9 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
       break ;
       case '7' :
         objeto_actual = OBJ_JERARQUICO;
+      break ;
+      case '8' :
+        objeto_actual = CUADRO;
       break ;
       case '!' :
         modo_actual = 0;

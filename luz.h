@@ -22,7 +22,7 @@ class Luz {
 		float	rotX = 0,
 				rotY = 0,
 				rotZ = 0;
-      Instante ultima_actu  ;
+      Instante ultima_actu;
 
 
 
