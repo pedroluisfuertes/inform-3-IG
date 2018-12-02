@@ -22,38 +22,59 @@ using namespace std;
 
 ObjMallaIndexada::ObjMallaIndexada(){
   
-  Tupla3f ambiente  ;
-  Tupla3f difusa    ;
-  Tupla3f especular ;
+  Tupla4f ambiente  ;
+  Tupla4f difusa    ;
+  Tupla4f especular ;
   float brillo      ;
 
   /* Materiales por defecto */
   //Material 1
-  ambiente  = {  0.3,  0.3,  0.3 };
-  difusa    = {  0.1,  0.1,  0.1 };
-  especular = { 0.05, 0.05, 0.05 };
+  ambiente  = {  0.3,  0.3,  0.3, 1.0};
+  difusa    = {  0.1,  0.1,  0.1, 1.0};
+  especular = { 0.05, 0.05, 0.05, 1.0};
   brillo    = 1;
   materiales.push_back(Material(ambiente, difusa,especular,brillo));
 
   //Material 2
-  ambiente  = {  0.3,  0.3,  0.3 };
-  difusa    = {  0.8,  0.8,  0.8 };
-  especular = { 0.05, 0.05, 0.05 };
+  ambiente  = {  0.3,  0.3,  0.3, 1.0 };
+  difusa    = {  0.8,  0.8,  0.8, 1.0 };
+  especular = { 0.05, 0.05, 0.05, 1.0 };
   brillo    = 1;
   materiales.push_back(Material(ambiente, difusa,especular,brillo));
 
   //Material 3
-  ambiente  = {  0.3,  0.3,  0.3 };
-  difusa    = {  0.1,  0.1,  0.1 };
-  especular = {  0.6,  0.6,  0.6 };
-  brillo    = 1;
+  ambiente  = {  0.3,  0.3,  0.3, 1.0 };
+  difusa    = {  0.1,  0.1,  0.1, 1.0 };
+  especular = {  0.6,  0.6,  0.6, 1.0 };
+  brillo    = 10;
   materiales.push_back(Material(ambiente, difusa,especular,brillo));
 
   //Material 4
-  ambiente  = {  0.3,  0.3,  0.3 };
-  difusa    = {  1.0,  1.0,  1.0 };
-  especular = {  1.0,  1.0,  1.0 };
+  ambiente  = {  0.3,  0.3,  0.3, 1.0 };
+  difusa    = {  1.0,  1.0,  1.0, 1.0 };
+  especular = {  1.0,  1.0,  1.0, 1.0 };
   brillo    = 1;
+  materiales.push_back(Material(ambiente, difusa,especular,brillo));
+
+ //Rubber Yellow
+  ambiente  = {  0.05,  0.05,     0, 1.0};
+  difusa    = {   0.5,   0.5,   0.4, 1.0};
+  especular = {   0.7,   0.7,  0.04, 1.0};
+  brillo    = 10;
+  materiales.push_back(Material(ambiente, difusa,especular,brillo));
+
+ //Ruby
+  ambiente  = {  0.175,  0.192,  0.192, 1.0 };
+  difusa    = {  0.614,  0.041,  0.041, 1.0 };
+  especular = {  0.728,  0.627,  0.627, 1.0 };
+  brillo    = 76.8;
+  materiales.push_back(Material(ambiente, difusa,especular,brillo));
+
+ //Material 4
+  ambiente  = {  0.175,  0.012,  0.012, 1.0 };
+  difusa    = {  0.508,  0.0508, 0.508, 1.0 };
+  especular = {  0.508,  0.0508, 0.508, 1.0 };
+  brillo    = 51.2;
   materiales.push_back(Material(ambiente, difusa,especular,brillo));
 
  

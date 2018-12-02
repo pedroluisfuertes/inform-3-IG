@@ -43,7 +43,7 @@ Escena::Escena()
 
     // Luz 2
     luz_indice = GL_LIGHT1; // ïndice de la funte de luz, entre GL_LIGHT0 y GL_LIGHT7
-    luz_posicion  = { 0.0, 0.0, 4.0, 1.0 }; // w != 1 ==> Luz no en el infinito
+    luz_posicion  = { 0.0, 0.0, 1.0, 1.0 }; // w != 1 ==> Luz no en el infinito
     luz_ambiente  = { 0.0, 0.0, 0.0, 1.0 };
     luz_difusa    = { 1.0, 0.0, 1.0, 1.0 };
     luz_especular = { 1.0, 0.0, 1.0, 1.0 };
