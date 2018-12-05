@@ -38,6 +38,7 @@ class Escena
 
    void clear_window();
 	void dibujar_objeto_actual();
+  void dibujar_luces();
 
    // Transformación de cámara
 	void change_projection( const float ratio_xy );
@@ -60,6 +61,14 @@ class Escena
      CUADRO = 7
 
     };
+    enum Estado
+    {
+     DEFAULT = 0,
+     SELECCION_OBJETO = 1,
+     SELECCION_COLOR = 2,
+     SELECCION_MATERIAL = 3
+
+    };
     std::vector<Objeto*> objetos;
    
 
@@ -71,9 +80,6 @@ class Escena
    bool activarAnimaciones = false; 
 
    std::vector<Luz*> luces;
-
-   Luz * luz1 = nullptr; 
-   Luz * luz2 = nullptr; 
 
    void leerPLY();
 

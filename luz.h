@@ -29,13 +29,15 @@ class Luz {
 	public:
 		Luz(GLenum p_luz_indice, Tupla4f p_luz_posicion, Tupla4f p_luz_ambiente, Tupla4f p_luz_difusa, Tupla4f p_luz_especular);
 		void activar(); 
+		void desactivar();
+		void dibujar();
 		static void activarLuces(); 
 		static void desactivarLuces(); 
-		void rotar(float alfa, float x, float y, float z);
 		void aumentarRotacionEnX(float alfa);
 		void aumentarRotacionEnY(float alfa);
 		void aumentarRotacionEnZ(float alfa);
 		void inicioGiro();
+		bool getActiva();
 		void gira();
 
 

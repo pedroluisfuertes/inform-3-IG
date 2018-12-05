@@ -45,7 +45,9 @@ class ObjMallaIndexada:public Objeto
    void eliminarVBO(GLuint id);
 
    void activarMaterial();
+   void setColor(int color);
    void siguienteColor();
+   void setMaterial(int material);
    void siguienteMaterial();
 
    private:

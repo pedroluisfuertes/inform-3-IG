@@ -29,27 +29,7 @@ Escena::Escena()
     //num_texturas = 2; // se usa para cambiar las texturas 't'
 
     objetos.resize(num_objetos);
-    // crear los objetos de las prácticas: Mallas o Jerárquicos....
-    
-
-    /* Creamos las luces */
-    // Luz 1    
-    GLenum  luz_indice = GL_LIGHT0; // ïndice de la funte de luz, entre GL_LIGHT0 y GL_LIGHT7
-    Tupla4f luz_posicion  = { 0.0, 0.0, 1.0, 0.0 }; // W  = 0 ==> luz en el infinito
-    Tupla4f luz_ambiente  = { 0.0, 0.0, 0.0, 1.0 };
-    Tupla4f luz_difusa    = { 1.0, 1.0, 1.0, 1.0 };
-    Tupla4f luz_especular = { 1.0, 1.0, 1.0, 1.0 };
-    luz1 = new Luz(luz_indice, luz_posicion, luz_ambiente, luz_difusa, luz_especular); 
-
-    // Luz 2
-    luz_indice = GL_LIGHT1; // ïndice de la funte de luz, entre GL_LIGHT0 y GL_LIGHT7
-    luz_posicion  = { 0.0, 0.0, 1.0, 1.0 }; // w != 1 ==> Luz no en el infinito
-    luz_ambiente  = { 0.0, 0.0, 0.0, 1.0 };
-    luz_difusa    = { 1.0, 0.0, 1.0, 1.0 };
-    luz_especular = { 1.0, 0.0, 1.0, 1.0 };
-    luz2 = new Luz(luz_indice, luz_posicion, luz_ambiente, luz_difusa, luz_especular);
-
- 
+    // crear los objetos de las prácticas: Mallas o Jerárquicos.... 
 }
 
 //**************************************************************************
@@ -65,11 +45,28 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
 	glEnable( GL_DEPTH_TEST );	// se habilita el z-bufer
     objetos[CUBO] = new Cubo();
     objetos[TETRAEDRO] = new Tetraedro();
-    objetos[CILINDRO] = new Cilindro(1,4);
-    objetos[CONO] = new Cono(1,4);
+    objetos[CILINDRO] = new Cilindro(2,40);
+    objetos[CONO] = new Cono(2,40);
     objetos[ESFERA] = new Esfera(40,40);
     objetos[OBJ_JERARQUICO] = new ObjJerarquico();
     objetos[CUADRO] = new Cuadro();
+
+    /* Creamos las luces */
+    // Luz 1    
+    GLenum  luz_indice = GL_LIGHT0; // ïndice de la funte de luz, entre GL_LIGHT0 y GL_LIGHT7
+    Tupla4f luz_posicion  = { 0.0, 1.0, 0.0, 0.0 }; // W  = 0 ==> luz en el infinito
+    Tupla4f luz_ambiente  = { 0.0, 0.0, 0.0, 1.0 };
+    Tupla4f luz_difusa    = { 1.0, 1.0, 1.0, 1.0 };
+    Tupla4f luz_especular = { 1.0, 1.0, 1.0, 1.0 };
+    luces.push_back(new Luz(luz_indice, luz_posicion, luz_ambiente, luz_difusa, luz_especular)); 
+
+    // Luz 2
+    luz_indice = GL_LIGHT1; // ïndice de la funte de luz, entre GL_LIGHT0 y GL_LIGHT7
+    luz_posicion  = { 0.0, 2.0, 5.0, 1.0 }; // w != 1 ==> Luz no en el infinito
+    luz_ambiente  = { 0.0, 0.0, 0.0, 1.0 };
+    luz_difusa    = { 1.0, 0.0, 1.0, 1.0 };
+    luz_especular = { 1.0, 0.0, 1.0, 1.0 };
+    luces.push_back(new Luz(luz_indice, luz_posicion, luz_ambiente, luz_difusa, luz_especular));
 
 	/*Width  = UI_window_width/10;
 	Height = UI_window_height/10;
@@ -84,6 +81,12 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
 // Funcion que dibuja el objeto activo actual, usando su método 'draw'
 // (llamada desde Escena::dibujar)
 // ***************************************************************************
+void Escena::dibujar_luces(){
+  if(glIsEnabled(GL_LIGHTING))
+    for(Luz* luz:luces)
+      if(luz->getActiva())
+        luz->dibujar();
+}
 
 void Escena::dibujar_objeto_actual()
 {
@@ -147,7 +150,9 @@ void Escena::dibujar()
   ejes.draw();
   if(lucesEncendidas)
     glEnable(GL_LIGHTING);
+  dibujar_luces();
 	dibujar_objeto_actual();
+
 }
 
 //**************************************************************************
@@ -213,11 +218,11 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
       break;
       case 'j' :
       case 'J' :
-        luz1->activar();
+        luces[0]->activar();
       break ;
       case 'k' :
       case 'K' :
-        luz2->activar();
+        luces[1]->activar();
       break ;
       case 'Z' :
         static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->incrementaParamAct();
@@ -285,7 +290,7 @@ void Escena::conmutarAnimaciones(){
         static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->inicioAnimaciones( );
       }
         glutIdleFunc( funcion_desocupado );
-        luz2->inicioGiro();
+        luces[1]->inicioGiro();
     }else{
       glutIdleFunc( nullptr );
     }
@@ -295,7 +300,7 @@ void Escena::mgeDesocupado(){
   if(objeto_actual == OBJ_JERARQUICO){
     static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->actualizarEstado( );
   }
-  luz2->gira();
+  luces[1]->gira();
   glutPostRedisplay();
 }
 //**************************************************************************

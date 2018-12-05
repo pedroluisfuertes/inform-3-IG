@@ -367,6 +367,11 @@ void ObjMallaIndexada::calcular_normales()
     normales_vertices.push_back(Tupla3f(0,0,0));
   }
 
+  std::vector<int> aux(5,8);
+
+  //std::vector<Tupla3f> aux(Tupla3f(0,0,0));
+  //&normales_vertices = &aux;  
+
   std::vector<int> m_vertices(vertices.size(), 0);
   //Calculamos las normales de las caras
   for(int i = 0; i < triangulos.size(); i++){
@@ -374,7 +379,7 @@ void ObjMallaIndexada::calcular_normales()
     Tupla3f a1 = vertices[triangulos[i](1)] - vertices[triangulos[i](0)],
             a2 = vertices[triangulos[i](2)] - vertices[triangulos[i](0)],
             n  = {a1(1) * a2(2) - a1(2) * a2(1),
-                  a1(0) * a2(2) - a1(2) * a2(0),
+                  a1(2) * a2(0) - a1(0) * a2(2),
                   a1(0) * a2(1) - a1(1) * a2(0)};
 
     //Módulo
@@ -417,10 +422,23 @@ void ObjMallaIndexada::calcular_normales()
     }*/
 
 }
+
+void ObjMallaIndexada::setColor(int color){
+  colorActivo = (color) % colores.size();
+  cout << "Color activo = " << colorActivo << endl; 
+
+}
+
 void ObjMallaIndexada::siguienteColor(){
   colorActivo = (++colorActivo) % colores.size();
   cout << "Color activo = " << colorActivo << endl; 
 
+}
+
+void ObjMallaIndexada::setMaterial(int material){
+  materialActivo = (material) % materiales.size();
+  cout << "Material activo = " << materialActivo << endl; 
+  activarMaterial();
 }
 
 void ObjMallaIndexada::siguienteMaterial(){

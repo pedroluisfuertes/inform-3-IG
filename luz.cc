@@ -22,27 +22,40 @@ Luz::Luz(GLenum p_luz_indice, Tupla4f p_luz_posicion, Tupla4f p_luz_ambiente, Tu
 	cout << "luz_especular = " << luz_especular << endl;
 	*/
 }
-
+void Luz::dibujar(){
+	glLightfv(luz_indice, GL_AMBIENT,  (GLfloat*) &luz_ambiente);
+	glLightfv(luz_indice, GL_DIFFUSE,  (GLfloat*) &luz_difusa);
+	glLightfv(luz_indice, GL_SPECULAR, (GLfloat*) &luz_especular);
+	glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+	    //lLoadIdentity();
+	    glRotatef( rotX, 1, 0, 0 );
+	    glRotatef( rotY, 0, 1, 0 );
+	    glRotatef( rotZ, 0, 0, 1 );
+		glLightfv(luz_indice, GL_POSITION, (GLfloat*) &luz_posicion);
+    glPopMatrix();
+}
 void Luz::activar(){
 	if (!activa){
+		cout << "Activada luz " << luz_indice << endl;
 		if(lucesActivas == 0) // Si no había luces activas, activamos el modo luces
 			activarLuces();
 		glEnable(luz_indice);
-		glLightfv(luz_indice, GL_AMBIENT,  (GLfloat*) &luz_ambiente);
-		glLightfv(luz_indice, GL_DIFFUSE,  (GLfloat*) &luz_difusa);
-		glLightfv(luz_indice, GL_SPECULAR, (GLfloat*) &luz_especular);
-		rotar(0,0,0,0);
 		lucesActivas++;
 		activa = true;
 	}else{
-		glDisable(luz_indice);
-		lucesActivas--;
-		if(Luz::lucesActivas == 0) // Si no quedan mas luces activas, desactivamos el modo luces
-			desactivarLuces();
-		activa = false; 
+		desactivar();
 	}
-	
 
+}
+
+void Luz::desactivar(){
+	cout << "Desactivada luz " << luz_indice << endl;
+	glDisable(luz_indice);
+	lucesActivas--;
+	if(Luz::lucesActivas == 0) // Si no quedan mas luces activas, desactivamos el modo luces
+		desactivarLuces();
+	activa = false; 
 }
 
 void Luz::activarLuces(){
@@ -53,23 +66,12 @@ void Luz::desactivarLuces(){
     glDisable(GL_LIGHTING);
 }
 
-void Luz::rotar(float alfa, float x, float y, float z){
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-	    glLoadIdentity();
-	    glRotatef( alfa, x, y, z );
-		glLightfv(luz_indice, GL_POSITION, (GLfloat*) &luz_posicion);
-    glPopMatrix();
-}
-
 void Luz::aumentarRotacionEnX(float alfa){
 	rotX += alfa;
 	if(rotX > 360)
         rotX -= 360;
     else if(rotX < 0)
         rotX += 360;
-
-    rotar(rotX, 1, 0, 0);
 }
 
 void Luz::aumentarRotacionEnY(float alfa){
@@ -78,8 +80,6 @@ void Luz::aumentarRotacionEnY(float alfa){
         rotY -= 360;
     else if(rotY < 0)
         rotY += 360;
-
-    rotar(rotY, 0, 1, 0);
 }
 
 void Luz::aumentarRotacionEnZ(float alfa){
@@ -88,8 +88,6 @@ void Luz::aumentarRotacionEnZ(float alfa){
         rotZ -= 360;
     else if(rotZ < 0)
         rotZ += 360;
-
-    rotar(rotZ, 0, 0, 1);
 }
 
 void Luz::inicioGiro( )
@@ -108,4 +106,9 @@ void Luz::gira(){
    //cout << "Duración s " << duracion_s.count() << endl;
    aumentarRotacionEnY(duracion_s.count() * 100);
 
+}
+
+bool Luz::getActiva(){
+	//cout << "activa = " << activa << endl;
+	return activa;
 }
