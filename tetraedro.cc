@@ -13,9 +13,9 @@ Tetraedro::Tetraedro()
    /*
    No se queda centrada, se queda sonbre el eje XY*/
    Tupla3f sup = {    0.0, 1.0,  0.0  }; // 0
-   Tupla3f izq = {  -1.0, -0.0,  0.0  }; // 1
-   Tupla3f der = {  +1.0, -0.0,  0.0 }; // 2
-   Tupla3f atr = {   0.00, -0.0,  -1.00  }; // 1
+   Tupla3f izq = {   -1.0,  0.0,  0.0  }; // 1
+   Tupla3f der = {   +1.0,  0.0,  0.0 }; // 2
+   Tupla3f atr = {   0.00, 0.0,  -1.00  }; // 1
 
    vertices.push_back (sup);
    vertices.push_back (der);
@@ -46,21 +46,21 @@ Tetraedro::Tetraedro()
 
    std::vector<Tupla2f> coordenadas_texturas_vertices; 
    
-   coordenadas_texturas_vertices.push_back(Tupla2f(1/8,1));
-   coordenadas_texturas_vertices.push_back(Tupla2f(0,0));
-   coordenadas_texturas_vertices.push_back(Tupla2f(1/4,0));
+   coordenadas_texturas_vertices.push_back(Tupla2f(0.125,0.0));
+   coordenadas_texturas_vertices.push_back(Tupla2f(0.25,1.0));
+   coordenadas_texturas_vertices.push_back(Tupla2f(0,1.0));
    
-   coordenadas_texturas_vertices.push_back(Tupla2f(3/8,1));
-   coordenadas_texturas_vertices.push_back(Tupla2f(1/4,1));
-   coordenadas_texturas_vertices.push_back(Tupla2f(2/4,0));
+   coordenadas_texturas_vertices.push_back(Tupla2f(0.375,0.0));
+   coordenadas_texturas_vertices.push_back(Tupla2f(0.25,1.0));
+   coordenadas_texturas_vertices.push_back(Tupla2f(0.5,1.0));
    
-   coordenadas_texturas_vertices.push_back(Tupla2f(5/8,1));
-   coordenadas_texturas_vertices.push_back(Tupla2f(2/4,1));
-   coordenadas_texturas_vertices.push_back(Tupla2f(3/4,0));
+   coordenadas_texturas_vertices.push_back(Tupla2f(0.625,0.0));
+   coordenadas_texturas_vertices.push_back(Tupla2f(0.5,1.0));
+   coordenadas_texturas_vertices.push_back(Tupla2f(0.75,1.0));
    
-   coordenadas_texturas_vertices.push_back(Tupla2f(7/8,1));
-   coordenadas_texturas_vertices.push_back(Tupla2f(3/4,1));
-   coordenadas_texturas_vertices.push_back(Tupla2f(1,0));
+   coordenadas_texturas_vertices.push_back(Tupla2f(0.875,0.0));
+   coordenadas_texturas_vertices.push_back(Tupla2f(0.75,1.0));
+   coordenadas_texturas_vertices.push_back(Tupla2f(1.0,1.0));
    
    texturas.push_back(Textura("./img/Piramides.jpg", coordenadas_texturas_vertices)); 
 }

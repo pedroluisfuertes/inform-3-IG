@@ -3,6 +3,8 @@
 
 #include "aux.h"     // includes de OpenGL/glut/glew, windows, y librería std de C++
 #include <string>
+#include "CImg.h"
+using namespace cimg_library;
 
 typedef struct _AUX_RGBImageRec {
     GLint sizeX, sizeY;
@@ -15,7 +17,8 @@ class Textura {
 		bool activa;
 		GLuint textura_id = 0;
    		std::vector<Tupla2f> coordenadas_texturas_vertices;
-
+   		std::vector<unsigned char> data;
+   		CImg<unsigned char> logo;
 
 	public:
 		Textura(const char *filename, std::vector<Tupla2f> coordenadas_texturas_vertices);

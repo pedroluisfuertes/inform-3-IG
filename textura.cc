@@ -3,8 +3,8 @@
 
 #include <GL/glut.h>
 
-#include "CImg.h"
 using namespace cimg_library;
+
 
 using namespace std ;
 
@@ -14,9 +14,9 @@ Textura::Textura(const char *filename, std::vector<Tupla2f> coordenadas_texturas
 
 	activa = false; 
 	this->coordenadas_texturas_vertices = coordenadas_texturas_vertices;
-	std::vector<unsigned char> data;
+	
 
-   CImg<unsigned char> logo;
+   
    logo.load(filename);
 
    // empaquetamos bien los datos
@@ -31,7 +31,14 @@ Textura::Textura(const char *filename, std::vector<Tupla2f> coordenadas_texturas
 	 data.push_back(*b);
       }
    //cout << "textura_id antes " << textura_id << endl; 
-   glGenTextures(1, &textura_id);
+   
+}
+
+void Textura::activar(){
+	//cout << "activar " << textura_id << endl; 
+	//for ( int i = 0; i < coordenadas_texturas_vertices.size(); i++)
+	//	cout << "coordenada " << i << " " << coordenadas_texturas_vertices[i](0) << " " << coordenadas_texturas_vertices[i](1) << endl; 
+	 glGenTextures(1, &textura_id);
    glBindTexture( GL_TEXTURE_2D, textura_id ); // activa textura con id textura_id
    //cout << "textura_id después " << textura_id << endl; 
    glActiveTexture(GL_TEXTURE0);
@@ -48,15 +55,8 @@ Textura::Textura(const char *filename, std::vector<Tupla2f> coordenadas_texturas
 
    // TRASFIERE LOS DATOS A GPU
    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, logo.width(), logo.height(),
-	//	0, GL_RGB, GL_UNSIGNED_BYTE, data.data());
+  //  0, GL_RGB, GL_UNSIGNED_BYTE, data.data());
    gluBuild2DMipmaps(GL_TEXTURE_2D,GL_RGB, logo.width(), logo.height(), GL_RGB, GL_UNSIGNED_BYTE, data.data());
-}
-
-void Textura::activar(){
-	//cout << "activar " << textura_id << endl; 
-	//for ( int i = 0; i < coordenadas_texturas_vertices.size(); i++)
-	//	cout << "coordenada " << i << " " << coordenadas_texturas_vertices[i](0) << " " << coordenadas_texturas_vertices[i](1) << endl; 
-	
 	glTexCoordPointer(2, GL_FLOAT, 0, coordenadas_texturas_vertices.data());
 }
 

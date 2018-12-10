@@ -29,9 +29,9 @@ ObjMallaIndexada::ObjMallaIndexada(){
 
   /* Materiales por defecto */
   //Material 1
-  ambiente  = {  0.3,  0.3,  0.3, 1.0};
-  difusa    = {  0.1,  0.1,  0.1, 1.0};
-  especular = { 0.05, 0.05, 0.05, 1.0};
+  ambiente  = {  0.0,  0.6,  0.0, 1.0};
+  difusa    = {  0.0,  0.4,  0.0, 1.0};
+  especular = { 0.00, 0.2, 0.00, 1.0};
   brillo    = 1;
   materiales.push_back(Material(ambiente, difusa,especular,brillo));
 
