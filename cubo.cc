@@ -32,4 +32,21 @@ Cubo::Cubo()
                   { 3, 7, 2 }, { 2, 7, 6 }
                 } ;
    inicializar();
+
+   std::vector<Tupla2f> coordenadas_texturas_vertices; 
+   
+   coordenadas_texturas_vertices.push_back(Tupla2f(0,1));
+   coordenadas_texturas_vertices.push_back(Tupla2f(0,0));
+   coordenadas_texturas_vertices.push_back(Tupla2f(1,1));
+   coordenadas_texturas_vertices.push_back(Tupla2f(1,0));
+   
+   /*
+   coordenadas_texturas_vertices.push_back(Tupla2f(0,1));
+   coordenadas_texturas_vertices.push_back(Tupla2f(1,1));
+   coordenadas_texturas_vertices.push_back(Tupla2f(1,0));
+   coordenadas_texturas_vertices.push_back(Tupla2f(0,0));
+   */
+   
+   texturas.push_back(Textura("./img/logo2.jpg", coordenadas_texturas_vertices)); 
+   
 }
