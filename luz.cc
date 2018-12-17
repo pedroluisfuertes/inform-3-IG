@@ -104,7 +104,7 @@ void Luz::gira(){
    const Duracion_s duracion_s  =  ahora - ultima_actu;
    ultima_actu = ahora ;
    //cout << "Duración s " << duracion_s.count() << endl;
-   aumentarRotacionEnY(duracion_s.count() * 100);
+   aumentarRotacionEnX(duracion_s.count() * 100);
 
 }
 

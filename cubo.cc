@@ -47,6 +47,6 @@ Cubo::Cubo()
    coordenadas_texturas_vertices.push_back(Tupla2f(0,0));
    */
    
-   texturas.push_back(Textura("./img/logo2.jpg", coordenadas_texturas_vertices)); 
+   //texturas.push_back(Textura("./img/logo2.jpg", coordenadas_texturas_vertices)); 
    
 }

@@ -53,7 +53,7 @@ void Esfera::construir( const int num_vert_perfil, const int num_instancias_perf
 				  	perfil.push_back(vertice);
 
 				};
-				cout << perfil[perfil.size()-1](0) << " " << perfil[perfil.size()-1](1) << " " << perfil[perfil.size()-1](2) << " " << endl;
+				//cout << perfil[perfil.size()-1](0) << " " << perfil[perfil.size()-1](1) << " " << perfil[perfil.size()-1](2) << " " << endl;
 				//x = 0;
 				//y = 0; 
 				vertice = {0,-radio,0}; 

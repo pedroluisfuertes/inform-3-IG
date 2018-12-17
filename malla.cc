@@ -28,18 +28,18 @@ ObjMallaIndexada::ObjMallaIndexada(){
   float brillo      ;
 
   /* Materiales por defecto */
-  //Material 1
-  ambiente  = {  0.0,  0.6,  0.0, 1.0};
-  difusa    = {  0.0,  0.4,  0.0, 1.0};
-  especular = { 0.00, 0.2, 0.00, 1.0};
-  brillo    = 1;
+  //Material GOLD
+  ambiente  = {  0.24725,  0.1995,  0.0745, 1.0};
+  difusa    = {  0.75164,  0.60648,  0.22648, 1.0};
+  especular = { 0.62828, 0.555802, 0.366065, 1.0};
+  brillo    = 0.6;
   materiales.push_back(Material(ambiente, difusa,especular,brillo));
 
-  //Material 2
-  ambiente  = {  0.3,  0.3,  0.3, 1.0 };
-  difusa    = {  0.8,  0.8,  0.8, 1.0 };
-  especular = { 0.05, 0.05, 0.05, 1.0 };
-  brillo    = 1;
+  //Material ESMERALDA
+  ambiente  = {  0.0215,  0.1745,  0.0215, 1.0 };
+  difusa    = {  0.07568,  0.61424,  0.07568, 1.0 };
+  especular = { 0.633, 0.727811, 0.633, 1.0 };
+  brillo    = 0.6;
   materiales.push_back(Material(ambiente, difusa,especular,brillo));
 
   //Material 3
@@ -401,8 +401,34 @@ void ObjMallaIndexada::calcular_normales()
 
   // Normalizamos el valor de las normales de ls vertices
   for(int i = 0; i < m_vertices.size(); i++){
-    normales_vertices[i] = normales_vertices[i]/m_vertices[i];
+    Tupla3f verticeAux = normales_vertices[i];
+    int eje = 0; 
+    int max = abs(verticeAux(eje));
+
+    //Calculamos la dirección
+    for (int i = 1; i < 3; i++){
+      if(max < abs(verticeAux(i))){
+        max = abs(verticeAux(i));
+        eje = i; 
+      }
+    }
+
+    // Calculamos el sentido
+    for(int i = 0; i < 3; i++){
+      if(i == eje){
+        if(verticeAux(i) >= 0)
+          verticeAux(i) = 1.0;
+        else
+          verticeAux(i) = -1.0;
+      }else{
+        verticeAux(i) = 0; 
+      }
+    }
+    
+    //cout << verticeAux << endl; 
+    normales_vertices[i] = verticeAux;
   }
+  //cout << endl << endl << endl;
 
   /*for(int i = 0; i < m_vertices.size(); i++){
 

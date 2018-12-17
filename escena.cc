@@ -54,18 +54,18 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
     /* Creamos las luces */
     // Luz 1    
     GLenum  luz_indice = GL_LIGHT0; // ïndice de la funte de luz, entre GL_LIGHT0 y GL_LIGHT7
-    Tupla4f luz_posicion  = { 0.0, 1.0, 0.0, 0.0 }; // W  = 0 ==> luz en el infinito
-    Tupla4f luz_ambiente  = { 0.0, 0.0, 0.0, 1.0 };
-    Tupla4f luz_difusa    = { 1.0, 1.0, 1.0, 1.0 };
-    Tupla4f luz_especular = { 1.0, 1.0, 1.0, 1.0 };
+    Tupla4f luz_posicion  = { -1.0, 0.0, 1.0, 0.0 }; // W  = 0 ==> luz en el infinito ==> Direccional
+    Tupla4f luz_ambiente  = {  1.0, 1.0, 0.0, 1.0 };
+    Tupla4f luz_difusa    = {  1.0, 1.0, 0.0, 1.0 };
+    Tupla4f luz_especular = {  1.0, 1.0, 0.0, 1.0 };
     luces.push_back(new Luz(luz_indice, luz_posicion, luz_ambiente, luz_difusa, luz_especular)); 
 
     // Luz 2
     luz_indice = GL_LIGHT1; // ïndice de la funte de luz, entre GL_LIGHT0 y GL_LIGHT7
-    luz_posicion  = { 0.0, 2.0, 5.0, 1.0 }; // w != 1 ==> Luz no en el infinito
-    luz_ambiente  = { 0.0, 0.0, 0.0, 1.0 };
-    luz_difusa    = { 1.0, 0.0, 1.0, 1.0 };
-    luz_especular = { 1.0, 0.0, 1.0, 1.0 };
+    luz_posicion  = { 1.0, -1.0, 1.0, 0.1 }; // w != 0 ==> Luz posicional; 1/0.1 = 10 sqrt(10^2 + (-10)^2 + 10^2) > 10
+    luz_ambiente  = { 0.0, 1.0, 0.0, 1.0 };
+    luz_difusa    = { 0.0, 1.0, 0.0, 1.0 };
+    luz_especular = { 0.0, 1.0, 0.0, 1.0 };
     luces.push_back(new Luz(luz_indice, luz_posicion, luz_ambiente, luz_difusa, luz_especular));
 
 	/*Width  = UI_window_width/10;
@@ -204,8 +204,8 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
       case 'P' :
         static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->siguienteParametro();
       break ;
-      case 'a' :
-      case 'A' :
+      case 'h' :
+      case 'H' :
         conmutarAnimaciones(); 
       break ;
       case 'u' :

@@ -44,19 +44,19 @@ void Textura::activar(){
    glActiveTexture(GL_TEXTURE0);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
    //cout << "logo.width() = " << logo.width() << "\tlogo.height() = " << logo.height() << endl;
 
    // TRASFIERE LOS DATOS A GPU
    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, logo.width(), logo.height(),
   //  0, GL_RGB, GL_UNSIGNED_BYTE, data.data());
-   gluBuild2DMipmaps(GL_TEXTURE_2D,GL_RGB, logo.width(), logo.height(), GL_RGB, GL_UNSIGNED_BYTE, data.data());
+   gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, logo.width(), logo.height(), GL_RGB, GL_UNSIGNED_BYTE, data.data());
 	glTexCoordPointer(2, GL_FLOAT, 0, coordenadas_texturas_vertices.data());
 }
 
