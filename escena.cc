@@ -305,6 +305,24 @@ void Escena::mgeDesocupado(){
 }
 //**************************************************************************
 
+void Escena::mouseFunc(GLint button, GLint state, GLint x, GLint y){
+  cout << "button" << button << endl; 
+
+  if(state = GLUT_DOWN){
+    switch( button ){
+    case GLUT_LEFT_BUTTON:
+      // mover cámara
+    break;
+    case GLUT_RIGHT_BUTTON:
+      //Selecciono triángulo
+    break;
+    }
+  }else if(button == GLUT_MIDDLE_BUTTON){
+    //zoom
+  }
+
+  
+}
 void Escena::teclaEspecial( int Tecla1, int x, int y )
 {
    switch ( Tecla1 )
@@ -329,7 +347,7 @@ void Escena::teclaEspecial( int Tecla1, int x, int y )
          break;
 	}
 
-	//std::cout << "Tecla especial " << Tecla1 << std::endl;
+	std::cout << "Tecla especial " << Tecla1 << std::endl;
 }
 
 //**************************************************************************

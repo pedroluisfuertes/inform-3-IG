@@ -94,6 +94,12 @@ void funcion_desocupado(){
    }
 }
 
+void mouseFunc(GLint button, GLint state, GLint x, GLint y){
+
+   escena->mouseFunc( button, state, x, y);
+
+}
+
 //***************************************************************************
 // Programa principal
 //
@@ -142,6 +148,8 @@ int main( int argc, char **argv )
 
    // asignación de la funcion llamada "tecla_Especial" al evento correspondiente
    glutSpecialFunc( special_keys );
+
+   glutMouseFunc( mouseFunc );
 
    // Para evitar el degradado
    //glShadeModel( GL_FLAT ); 

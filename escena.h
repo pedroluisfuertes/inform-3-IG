@@ -96,6 +96,7 @@ class Escena
 
 	// Interacción con la escena
 	bool teclaPulsada( unsigned char Tecla1, int x, int y ) ;
+  void mouseFunc( GLint button, GLint state, GLint x, GLint y);
 	void teclaEspecial( int Tecla1, int x, int y );
 
   void mgeDesocupado(); 
