@@ -97,7 +97,15 @@ void funcion_desocupado(){
 void mouseFunc(GLint button, GLint state, GLint x, GLint y){
 
    escena->mouseFunc( button, state, x, y);
+   glutPostRedisplay();
+   
+}
 
+void motionFunc(int x, int y){
+
+   escena->motionFunc( x, y);
+   glutPostRedisplay();
+   
 }
 
 //***************************************************************************
@@ -123,8 +131,8 @@ int main( int argc, char **argv )
    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
    // variables que determninan la posicion y tamaño de la ventana X
-   const int UI_window_pos_x  = 50,
-             UI_window_pos_y  = 50,
+   const int UI_window_pos_x  = 0,
+             UI_window_pos_y  = 0,
              UI_window_width  = 500,
              UI_window_height = 500;
 
@@ -149,7 +157,11 @@ int main( int argc, char **argv )
    // asignación de la funcion llamada "tecla_Especial" al evento correspondiente
    glutSpecialFunc( special_keys );
 
+   //Pulsación de botones del ratón
    glutMouseFunc( mouseFunc );
+
+   //Movimiento del ratón mientras se pulsa un botón
+   glutMotionFunc( motionFunc );
 
    // Para evitar el degradado
    //glShadeModel( GL_FLAT ); 

@@ -422,7 +422,18 @@ void ObjMallaIndexada::calcular_normales()
     }*/
 
 }
+/*
+void ObjMallaIndexada::addColor(Tupla3f color){
+  colores.push_back(color);
+}
+Tupla3f ObjMallaIndexada::getColorActual(){
+  return colores[colorActivo];
+}
 
+vector<Tupla3f> ObjMallaIndexada::getColores(){
+  return colores;
+}
+*/
 void ObjMallaIndexada::setColor(int color){
   colorActivo = (color) % colores.size();
   cout << "Color activo = " << colorActivo << endl; 

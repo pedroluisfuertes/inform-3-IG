@@ -20,6 +20,8 @@ Grupo: 3º A3
 
 #include "luz.h"
 
+#include "camara.h"
+
 
 class Escena
 {
@@ -36,19 +38,21 @@ class Escena
    // variables que controlan la ventana y la transformacion de perspectiva
    GLfloat Width, Height, Front_plane, Back_plane;
 
-   void clear_window();
+  void clear_window();
 	void dibujar_objeto_actual();
   void dibujar_luces();
 
-   // Transformación de cámara
+  // Transformación de cámara
 	void change_projection( const float ratio_xy );
 	void change_observer();
-
+  void pick( int x, int y);
+  void procesarHits (GLint hits, GLuint buffer[]);
+  void dibuja_seleccion();
 
 
   // Objetos de la escena
     int objeto_actual = 0; // objeto actual (el que se visualiza)
-    int num_objetos = 8; // número de objetos 
+    int num_objetos = 9; // número de objetos 
     enum Objetos
     {
      CUBO = 0, 
@@ -58,7 +62,8 @@ class Escena
      ESFERA = 4,
      OBJ_PLY = 5,
      OBJ_JERARQUICO = 6,
-     CUADRO = 7
+     CUADRO = 7,
+     SELECCION = 8
 
     };
     enum Estado
@@ -70,7 +75,9 @@ class Escena
 
     };
     std::vector<Objeto*> objetos;
-   
+    
+    bool botonDerechoPulsado = false;
+    int cx = 0, cy = 0;
 
    int num_modos = 4, 
        modo_actual = 0;
@@ -80,6 +87,9 @@ class Escena
    bool activarAnimaciones = false; 
 
    std::vector<Luz*> luces;
+
+   std::vector<Camara*> camaras;
+   int camaraActual = 0;
 
    void leerPLY();
 
@@ -97,6 +107,8 @@ class Escena
 	// Interacción con la escena
 	bool teclaPulsada( unsigned char Tecla1, int x, int y ) ;
   void mouseFunc( GLint button, GLint state, GLint x, GLint y);
+  void motionFunc( int x, int y);
+
 	void teclaEspecial( int Tecla1, int x, int y );
 
   void mgeDesocupado(); 
