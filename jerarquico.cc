@@ -161,3 +161,11 @@ void ObjJerarquico::siguienteMaterial( )
 {
    objparam->siguienteMaterial();
 }
+
+void ObjJerarquico::addColor(Tupla3u color){
+
+}
+std::vector<Tupla3u> ObjJerarquico::getColorActual(){
+}
+std::vector<std::vector<Tupla3u> > ObjJerarquico::getColores(){
+}

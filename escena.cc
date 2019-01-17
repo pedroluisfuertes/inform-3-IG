@@ -45,7 +45,7 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
 	glEnable( GL_DEPTH_TEST );	// se habilita el z-bufer
     objetos[CUBO] = new Cubo();
     objetos[TETRAEDRO] = new Tetraedro();
-    objetos[CILINDRO] = new Cilindro(2,40);
+    objetos[CILINDRO] = new Cilindro(2,4);
     objetos[CONO] = new Cono(2,40);
     objetos[ESFERA] = new Esfera(40,40);
     objetos[OBJ_JERARQUICO] = new ObjJerarquico();
@@ -345,7 +345,7 @@ void Escena::mouseFunc(GLint button, GLint state, GLint x, GLint y){
   switch( button ){
   case GLUT_LEFT_BUTTON:
     // mover cámara
-    botonDerechoPulsado = state == GLUT_DOWN;
+    botonIzquierdoPulsado = state == GLUT_DOWN;
     cx = x;
     cy = y;
   break;
@@ -368,7 +368,7 @@ void Escena::motionFunc( int x, int y){
   //cout << "x = " << x << endl; 
   //cout << "y = " << y << endl;
   float ang = 1; 
-  if(botonDerechoPulsado){
+  if(botonIzquierdoPulsado){
     if(cx > x)
       //Observer_angle_y--;
       camaras[camaraActual]->girarY(-ang);
@@ -480,21 +480,25 @@ void Escena::procesarHits (GLint hits, GLuint buffer[])
 void Escena::dibuja_seleccion() {
 
   // Dibuja cuatro patos
+  int n = 2; 
+  int m = 3; 
+  objetos_seleccion.resize(n*m);
   glDisable(GL_DITHER); // deshabilita el degradado
-  for(int i = 0; i < 2; i++){
+  for(int i = 0; i < n; i++){
     //cout << "i = " << i << endl; 
-    for(int j = 0; j < 2; j++) {
+    for(int j = 0; j < m; j++) {
       glPushMatrix();
-      switch (i*2+j) { // Un color para cada pato
+      switch (i*n+j) { // Un color para cada pato
         case 0: glColor3ub(255,0,0);break;
         case 1: glColor3ub(0,255,0);break;
         case 2: glColor3ub(0,0,255);break;
         case 3: glColor3ub(250,0,250);break;
+        default: glColor3ub(250,0,250);break;
     }
 
     glTranslatef(i*3.0,0,-j * 3.0);
-    objetos[3]->draw((ModoVis) modo_actual, modo_diferido);
-    objetos[3]->siguienteColor(); 
+    objetos_seleccion[i*n+j] = new Cilindro(2,4);
+    objetos_seleccion[i*n+j]->draw((ModoVis) modo_actual, modo_diferido);
     glPopMatrix();
     }
   }

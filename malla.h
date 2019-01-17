@@ -50,6 +50,10 @@ class ObjMallaIndexada:public Objeto
    void setMaterial(int material);
    void siguienteMaterial();
 
+   void addColor(Tupla3u color);
+   std::vector<Tupla3u> getColorActual();
+   std::vector<std::vector<Tupla3u> > getColores();
+
    private:
       struct Material
      {
@@ -73,7 +77,7 @@ class ObjMallaIndexada:public Objeto
 
    std::vector<Tupla3f> vertices ;   // tabla de coordenadas de vértices (una tupla por vértice, con tres floats)
    std::vector<Tupla3i> triangulos ; // una terna de 3 enteros por cada cara o triángulo
-   std::vector<std::vector<Tupla3f> > colores ; // una terna de 3 enteros por cada cara o triángulo
+   std::vector<std::vector<Tupla3u> > colores ; // una terna de 3 enteros por cada cara o triángulo
    std::vector<Tupla3f> normales_vertices;
    std::vector<Material> materiales;
    std::vector<Textura> texturas;
@@ -92,6 +96,7 @@ class ObjMallaIndexada:public Objeto
    // completar: tabla de colores, tabla de normales de vértices
    private:
    void colorear(); 
+   void colorear(Tupla3u color); 
    void dibujaInmediato(); 
    void dibujaDiferido(); 
     

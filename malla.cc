@@ -9,6 +9,8 @@ Grupo: 3º A3
 #include "textura.h"
 #include "iostream"
 #include <math.h>
+#include <limits.h>
+
 
 // *****************************************************************************
 //
@@ -142,9 +144,9 @@ void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo)
           else
             triangulos2.push_back(triangulos[i]);
         }
-        glColorPointer( 3, GL_FLOAT, 0, colores[colorActivo].data());
+        glColorPointer( 3, GL_UNSIGNED_INT, 0, colores[colorActivo].data());
         glDrawElements( GL_TRIANGLES, triangulos1.size()*3, GL_UNSIGNED_INT, triangulos1.data() );
-        glColorPointer( 3, GL_FLOAT, 0, colores[(colorActivo + 1) % colores.size()].data());
+        glColorPointer( 3, GL_UNSIGNED_INT, 0, colores[(colorActivo + 1) % colores.size()].data());
         glDrawElements( GL_TRIANGLES, triangulos2.size()*3, GL_UNSIGNED_INT, triangulos2.data() );
         glDisableClientState(GL_COLOR_ARRAY);
       break ;
@@ -161,6 +163,10 @@ void ObjMallaIndexada::draw_ModoInmediato(ModoVis modo)
 void ObjMallaIndexada::dibujaInmediato(){
   // visualizar, indicando: tipo de primitiva, número de índices,
       // tipo de los índices, y dirección de la tabla de índices
+  //cout << "color activo " << colores[colorActivo].size() << "  = " << colorActivo << endl; 
+  //for (int i = 0; i < colores[colorActivo].size(); i++)
+  //int i = 0; 
+    //cout <<  i <<  " " << colores[colorActivo][i](0) << " "<< colores[colorActivo][i](1) << " " << colores[colorActivo][i](2) << endl; 
         if(!texturas.empty()){
           glColor3f(1,1,1);
           //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -173,10 +179,16 @@ void ObjMallaIndexada::dibujaInmediato(){
           Textura::desactivarTexturas();
           //glutSwapBuffers();
         }else if (!glIsEnabled(GL_LIGHTING)){
+          //cout << "entroooo" << endl; 
           glEnableClientState( GL_COLOR_ARRAY );
-          glColorPointer( 3, GL_FLOAT, 0, colores[colorActivo].data());
+          glColorPointer( 3, GL_UNSIGNED_INT, 0, colores[colorActivo].data());
           glDrawElements( GL_TRIANGLES, triangulos.size()*3, GL_UNSIGNED_INT, triangulos.data() );
-          glDisableClientState(GL_COLOR_ARRAY);
+          /*
+          GLenum err;
+          while ((err=glGetError())!=GL_NO_ERROR)
+            cout<<"OpenGL error: "<<err<<endl;
+         // glDisableClientState(GL_COLOR_ARRAY);
+         */
         }else{
           glDrawElements( GL_TRIANGLES, triangulos.size()*3, GL_UNSIGNED_INT, triangulos.data() );
         }
@@ -238,7 +250,7 @@ void ObjMallaIndexada::dibujaDiferido(){
     if (!glIsEnabled(GL_LIGHTING) && texturas.empty()){
       // Colores
       glBindBuffer( GL_ARRAY_BUFFER, id_vbo_colores ); // activar VBO de colores     
-      glColorPointer( 3, GL_FLOAT, 0, 0);              // 
+      glColorPointer( 3, GL_UNSIGNED_INT, 0, 0);              // 
       glBindBuffer( GL_ARRAY_BUFFER, 0 );              // Desactivar el VBO de colores 
       glEnableClientState( GL_COLOR_ARRAY );           // Habili      glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, id_vbo_triangulos );// activar VBO de triángulos  
 
@@ -327,15 +339,19 @@ void ObjMallaIndexada::inicializar(){
 
 void ObjMallaIndexada::colorear(){
   // Damos colores a los objetos, independeientemente del número de caras
-  const std::vector<Tupla3f> colores_model = { { 1, 0, 0 }, { 0, 0, 1 }, { 0, 1, 1 } }; 
-    colores.resize(colores_model.size() + 2); 
+  const std::vector<Tupla3u> colores_model = { { UINT_MAX, 0, 0 }, { 0, 0, UINT_MAX }, { 0, UINT_MAX, UINT_MAX } }; 
+    colores.resize(colores_model.size()); 
     for(int i = 0; i < colores_model.size(); i++){
-      for(int j = 0; j < vertices.size(); j++){
+      for(int j = 0; j < vertices.size(); j++)
         colores[i].push_back(colores_model[i]); 
-      }
     }
+}
+void ObjMallaIndexada::colorear(Tupla3u color){
+  // Damos colores a los objetos, independeientemente del número de caras
+    vector<Tupla3u> v(vertices.size(), color);
+    colores.push_back(v); 
     // Color aleatorio
-    Tupla3f color; 
+    /*Tupla3f color; 
     for(int j = 0; j < vertices.size(); j++){
       color[0] = (rand() % 10000 + 1) / 10000.0;
       color[1] = (rand() % 10000 + 1) / 10000.0;
@@ -354,7 +370,7 @@ void ObjMallaIndexada::colorear(){
       colores[colores_model.size() + 1].push_back(color); 
     }
     //colores[colores_model.size() + 1] = normales_vertices;
-
+    */
 
 }
 // -----------------------------------------------------------------------------
@@ -482,4 +498,15 @@ GLuint ObjMallaIndexada::CrearVBO( GLuint tipo_vbo, GLuint tamanio_bytes, GLvoid
 
 void ObjMallaIndexada::eliminarVBO(GLuint id){
   glDeleteBuffers(1, &id);
+}
+
+void ObjMallaIndexada::addColor(Tupla3u color){
+  colorear(color);
+  colorActivo = colores.size()-1;
+}
+std::vector<Tupla3u> ObjMallaIndexada::getColorActual(){
+  return colores[colorActivo];
+}
+std::vector<std::vector<Tupla3u> > ObjMallaIndexada::getColores(){
+  return colores;
 }

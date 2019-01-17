@@ -75,8 +75,9 @@ class Escena
 
     };
     std::vector<Objeto*> objetos;
+    std::vector<Objeto*> objetos_seleccion;
     
-    bool botonDerechoPulsado = false;
+    bool botonIzquierdoPulsado = false;
     int cx = 0, cy = 0;
 
    int num_modos = 4, 
