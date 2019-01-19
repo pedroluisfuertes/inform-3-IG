@@ -195,6 +195,7 @@ typedef TuplaG2<int>    Tupla2i ;
 typedef TuplaG3<float>  Tupla3f ;
 typedef TuplaG3<double> Tupla3d ;
 typedef TuplaG3<uint>   Tupla3u ;
+typedef TuplaG3<unsigned char>   Tupla3c ;
 typedef TuplaG3<int>    Tupla3i ;
 
 typedef TuplaG4<float>  Tupla4f ;

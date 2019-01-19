@@ -18,7 +18,7 @@
 ObjJerarquico::ObjJerarquico()
 {
    objparam = new GrafoParam();
-
+   tipo = OBJ_JERARQUICO;
    delta_valores_na = 1; 
    // inicializar el valor no acotado de cada parámetro a 0, e
    // iniciaizar asimismo su valor efectivo.
@@ -162,10 +162,18 @@ void ObjJerarquico::siguienteMaterial( )
    objparam->siguienteMaterial();
 }
 
-void ObjJerarquico::addColor(Tupla3u color){
+void ObjJerarquico::addColor(Tupla3c color){
 
 }
-std::vector<Tupla3u> ObjJerarquico::getColorActual(){
+std::vector<Tupla3c> ObjJerarquico::getColorActual(){
 }
-std::vector<std::vector<Tupla3u> > ObjJerarquico::getColores(){
+std::vector<std::vector<Tupla3c> > ObjJerarquico::getColores(){
 }
+int ObjJerarquico::getIndColorActual(){
+}
+
+void ObjJerarquico::setIndColorActual(int c){
+}
+  void ObjJerarquico::setColorActual(Tupla3c vColor){
+    
+  }

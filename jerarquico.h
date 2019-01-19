@@ -65,9 +65,14 @@ class ObjJerarquico : public Objeto
       void activarMaterial();
       void siguienteColor();
       void siguienteMaterial();
-      void addColor(Tupla3u color);
-      std::vector<Tupla3u> getColorActual();
-      std::vector<std::vector<Tupla3u> > getColores();
+      void addColor(Tupla3c color);
+      std::vector<Tupla3c> getColorActual();
+      std::vector<std::vector<Tupla3c> > getColores();
+      int getIndColorActual();
+      void setIndColorActual(int c);
+      void setColorActual(Tupla3c vColor);
+
+
 
    private:
       // puntero al objeto con el grafo de escena

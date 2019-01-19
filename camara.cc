@@ -1,509 +1,251 @@
 #include "camara.h"
-#include <cmath>
-#include "iostream"
-   using namespace std ;
-   #define PI 3.14159265f
+#include "cmath"
 
+#define PI 3.141592
 
-void imprimeMatriz(string s,  std::vector<Tupla3f> a){
-	cout << s << endl; 
-	for (int i = 0; i < a.size(); i++)
-	{
-		cout << a[i](0) << "\t" << a[i](1) << "\t" << a[i](2) << endl;
-	}
-}
-void imprimeMatriz(std::vector<Tupla3f> a){
-
-
-	for (int i = 0; i < a.size(); i++)
-	{
-		cout << a[i](0) << "\t" << a[i](1) << "\t" << a[i](2) << endl;
-	}
-}
-
-
-Camara::Camara(){}
-
-Camara::Camara(	Tupla3f eyeInicial,
- 			Tupla3f at,
- 			Tupla3f up,
- 			GLdouble left_p, 		GLdouble right_p,
- 			GLdouble bottom_p, 	GLdouble top_p,
- 			GLdouble near_p, 		GLdouble far_p,
- 			bool ortho_p){
-
-	// gluLookAt
-	cambiarPosicion(eyeInicial);
-	this->up = up;
-	this->at = at;
-
- 	// glFrustum
- 	left = left_p;	 right = right_p;
- 	bottom = bottom_p;	 top = top_p;
- 	near = near_p;	 far = far_p;
- 	ortho = ortho_p;
-
-}
-
-void Camara::draw(){
-	// Posicionamos y direccionamos la cámara
-	//cout << "Cámara: eyeInicial(0) = " << eyeInicial(0) << "\t eyeInicial(1) = " << eyeInicial(1) << "\teyeZ = " << eyeInicial(2) << endl; 
-	drawFrustum();
-	//if(!ortho)
-	glMatrixMode(GL_MODELVIEW);
-  	glLoadIdentity();
-	//gluLookAt( 	eyeInicial(0),  	eyeInicial(1),  	eyeInicial(2),		// Posición
-	gluLookAt( 	eyeReal(0),  	eyeReal(1),  	eyeReal(2),		// Posición
-    			at(0), 	at(1),  	at(2),	// Dirección
- 				up(0), 	up(1), 	up(2)); 	// Orientación
-
-}
-
-void Camara::redimensionar( int newWidth, int newHeight )
-{
-  top = 0.84 * near;
-  bottom = -top;
-
-  right = float(newWidth) / float(newHeight) * top ;
-  left = -right;
-
-  cout << "near = " << near << endl; 
-  cout << "top = " << 0.84*near << endl;
-  cout << "right = " << float(newWidth)/float(newHeight)*top << endl;
-
-  //drawFrustum();
-  glViewport( 0, 0, newWidth, newHeight );
-  
-
-}
-
-void Camara::drawFrustum(){
-	glMatrixMode( GL_PROJECTION );
- 	glLoadIdentity();
- 	if (!ortho)
-		glFrustum( left, right, bottom, top, near, far);
-	else
-		glOrtho(   left, right, bottom, top, near, far);
-		
-	//glViewport( 0, 0, right - left, top - bottom );
-
-}
-
-void Camara::cambiarPosicion(Tupla3f eyeInicial){
-	this->eyeInicial = {0, 0, sqrt(eyeInicial(0) * eyeInicial(0) + eyeInicial(1) * eyeInicial(1) + eyeInicial(2) * eyeInicial(2))};
-	//this->eyeInicial = eyeInicial;
-	this->eyeReal = eyeInicial;
-	angulo(1) = atan(sqrt(eyeInicial(2) / eyeInicial(0))) / PI * 180;
-	angulo(0) = atan(sqrt(eyeInicial(1) / eyeInicial(2))) / PI * 180;
-	cout << "angulo(0) = " << angulo(0) << endl; 
-	cout << "angulo(1) = " << angulo(1) << endl; 
-}
-void Camara::zoom(float incremento){
-	if(incremento > 0){
-
-		left 	*= incremento;
-		right 	*= incremento;
-		bottom 	*= incremento;
-		top 	*= incremento;
-		
-	}else if(incremento < 0){
-
-		left 	/= -incremento;
-		right 	/= -incremento;
-		bottom 	/= -incremento;
-		top 	/= -incremento;
-		
-	}else{
-		cout << "El incremento no puede ser 0" << endl; 
-	}
-
-	/*cout << "\n\nZoom: " << endl; 
-	cout << "eyeInicial(0) = " << eyeInicial(0) << endl;
-	cout << "eyeInicial(1) = " << eyeInicial(1) << endl;
-	cout << "eyeZ = " << eyeZ << endl;
-	cout << "left = " << left << endl;
-	cout << "right = " << right << endl;
-	cout << "bottom = " << bottom << endl;
-	cout << "top = " << top << endl << endl;*/
+Camara::Camara (Tupla3f eye, Tupla3f at, Tupla3f up, int tipo, float left, float right, float bottom, float top, float near, float far){
 	
+	this->eye = eye;
+	this->at = at;
+	this->up = up;
+	this->tipo = tipo;
+	this->left = left;
+	this->right = right;
+	this->bottom = bottom;
+	this->top = top;
+	this->near = near;
+	this->far = far;
+
 }
 
-void Camara::cambiaSistemaCoordenadasACoordenadasDeLaCamara(Tupla3f &n, Tupla3f &u,Tupla3f &v){
+void Camara::rotarXExaminar (float angle){
 
-	//std::cout << "eyeInicial original :" << eyeInicial(0) << "," << eyeInicial(1) << "," << eyeInicial(2) << std::endl;
+	//std::cout << "eye original :" << eye(0) << "," << eye(1) << "," << eye(2) << std::endl;
 
-	Tupla3f vup;
+	Tupla3f n, u, v, vup, xd;
 
 	float modulo_u, modulo_v, modulo_n;
-	Tupla3f up = {0, 1, 0}; 
-	// Eje z Cámara
-	n = eyeInicial - at; // Calculamos e vector
-	modulo_n = sqrt(n(0)*n(0) + n(1)*n(1) + n(2)*n(2)); // Obtenemos el módulo
-	n = {n(0)/modulo_n, n(1)/modulo_n, n(2)/modulo_n}; // Normalizamos
-	//std::cout << "eje z: " << n(0) << "," << n(1) << "," << n(2) << std::endl;
-
-	// Eje x Cámara
-	vup = up - at;
-
-	u = {vup(1) * n(2) - vup(2) * n(1), vup(2) * n(0) - vup(0) * n(2), vup(0) * n(1) - vup(1) * n(0)};
-	modulo_u = sqrt(u(0)*u(0) + u(1)*u(1) + u(2)*u(2));
-	u = {u(0)/modulo_u, u(1)/modulo_u, u(2)/modulo_u};
-	//std::cout << "eje x: " << u(0) << "," << u(1) << "," << u(2) << std::endl;
-
-	// Eje y Cámara
-	v = {n(1) * u(2) - n(2) * u(1), n(2) * u (0) - n(0) * u(2), n(0) * u(1) - n(1) * u(0)};
-	modulo_v = sqrt(v(0)*v(0) + v(1)*v(1) + v(2)*v(2));
-	v = {v(0)/modulo_v, v(1)/modulo_v, v(2)/modulo_v};
-	//std::cout << "eje y: " << v(0) << "," << v(1) << "," << v(2) << std::endl;
-
-	// Pasamos las coordenadas del mundo a coordenadas de la cámara
-	//eyeInicial = {producto_escalar(-eyeInicial, u, 3), producto_escalar(-eyeInicial, v, 3), producto_escalar(-eyeInicial, n, 3)};
-	
-	eyeReal = {producto_escalar(-eyeInicial, u, 3), producto_escalar(-eyeInicial, v, 3), producto_escalar(-eyeInicial, n, 3)};
-
-	//std::cout << "eyeInicial escalar :" << eyeInicial(0) << "," << eyeInicial(1) << "," << eyeInicial(2) << std::endl;
-
-}
-
-void Camara::cambiaSistemaCoordenadasACoordenadasDelMundo(Tupla3f &n, Tupla3f &u,Tupla3f &v){
 
 	float x, y, z, s;
 
-	//std::cout << "eyeInicial en el origen :" << eyeInicial(0) << "," << eyeInicial(1) << "," << eyeInicial(2) << std::endl;
+	// Calcular el eje n (el z de la cámara)
+	n = eye - at;
 
-	//s =   u(0) *   v(1) *   n(2) +   u(1) *   v(2) *   n(0) +   u(2) *   v(0) *   n(1) - 
-	//   (  u(2) *   v(1) *   n(0) +   u(1) *   v(0) *   n(2) +   u(0) *   v(2) *   n(1)  );
-	/*
-	x = eyeInicial(0) *   v(1) *   n(2) +   u(1) *   v(2) * eyeInicial(2) +   u(2) * eyeInicial(1) *   n(1) - 
-	   (  u(2) *   v(1) * eyeInicial(2) +   u(1) * eyeInicial(1) *   n(2) + eyeInicial(0) *   v(2) *   n(1));
+	modulo_n = sqrt(n(0)*n(0) + n(1)*n(1) + n(2)*n(2));
 
-	y =   u(0) * eyeInicial(1) *   n(2) + eyeInicial(0) *   v(2) *   n(0) +   u(2) *   v(0) * eyeInicial(2) - 
-	   (  u(2) * eyeInicial(1) *   n(0) + eyeInicial(0) *   v(0) *   n(2) +   u(0) *   v(2) * eyeInicial(2));
+	// Normalizar
+	n = {n(0)/modulo_n, n(1)/modulo_n, n(2)/modulo_n};
 
-	z =   u(0) *   v(1) * eyeInicial(2) +   u(1) * eyeInicial(1) *   n(0) + eyeInicial(0) *   v(0) *   n(1) - 
-	   (eyeInicial(0) *   v(1) *   n(0) +   u(1) *   v(0) * eyeInicial(2) +   u(0) * eyeInicial(1) *   n(1));
+	//std::cout << "eje z: " << n(0) << "," << n(1) << "," << n(2) << std::endl;
 
-	x = x;
-	y = y;
-	z = z;
+	// Calcular el viewUp
+	vup = up - at;
 
-	eyeInicial = {x, y, z};
-	*/
+	// Calcular u (eje x de la cámara) mediante el producto vectorial de VPN (n) y viewUp
+	u = {vup(1) * n(2) - vup(2) * n(1), vup(2) * n(0) - vup(0) * n(2), vup(0) * n(1) - vup(1) * n(0)};
 
-	x = eyeReal(0) *   v(1) *   n(2) +   u(1) *   v(2) * eyeReal(2) +   u(2) * eyeReal(1) *   n(1) - 
-	   (  u(2) *   v(1) * eyeReal(2) +   u(1) * eyeReal(1) *   n(2) + eyeReal(0) *   v(2) *   n(1));
+	modulo_u = sqrt(u(0)*u(0) + u(1)*u(1) + u(2)*u(2));
 
-	y =   u(0) * eyeReal(1) *   n(2) + eyeReal(0) *   v(2) *   n(0) +   u(2) *   v(0) * eyeReal(2) - 
-	   (  u(2) * eyeReal(1) *   n(0) + eyeReal(0) *   v(0) *   n(2) +   u(0) *   v(2) * eyeReal(2));
+	// Normalizar
+	u = {u(0)/modulo_u, u(1)/modulo_u, u(2)/modulo_u};
 
-	z =   u(0) *   v(1) * eyeReal(2) +   u(1) * eyeReal(1) *   n(0) + eyeReal(0) *   v(0) *   n(1) - 
-	   (eyeReal(0) *   v(1) *   n(0) +   u(1) *   v(0) * eyeReal(2) +   u(0) * eyeReal(1) *   n(1));
+	//std::cout << "eje x: " << u(0) << "," << u(1) << "," << u(2) << std::endl;
 
-	x = x;
-	y = y;
-	z = z;
+	// Calcular v (eje y de la cámara) mediante el producto vectorial de n y u (z y x de la cámara)
+	v = {n(1) * u(2) - n(2) * u(1), n(2) * u (0) - n(0) * u(2), n(0) * u(1) - n(1) * u(0)};
 
-	eyeReal = {x, y, z};
+	modulo_v = sqrt(v(0)*v(0) + v(1)*v(1) + v(2)*v(2));
 
-	//std::cout << "eyeInicial final " << x << "," << y << "," << z << std::endl;
-}
+	// Normalizar
+	v = {v(0)/modulo_v, v(1)/modulo_v, v(2)/modulo_v};
 
+	//std::cout << "eje y: " << v(0) << "," << v(1) << "," << v(2) << std::endl;
 
-void Camara::girar(){
+	// Matriz de vista (alinear ejes de la cámara a los del mundo y la cámara respecto al origen)
+	eye = {producto_escalar(eye, u, 3), producto_escalar(eye, v, 3), producto_escalar(eye, n, 3)};
 
-	//double hip = sqrt(eyeInicial(0) * eyeInicial(0) + eyeInicial(1) * eyeInicial(1) + eyeInicial(2) * eyeInicial(2));
-	/*
-	double hip = 5;
+	//std::cout << "eye escalar :" << eye(0) << "," << eye(1) << "," << eye(2) << std::endl;
 
-	std::cout << "Eye Antes Transformación Y:\t" << eyeReal(0) << ", \t" << eyeReal(1) << ", \t" << eyeReal(2) << std::endl;
-	cout << "angulo(0) = " << angulo(0) << endl;
-	cout << "angulo(1) = " << angulo(1) << endl;
+	// Calcular y realizar el giro pertinente
 
-	eyeReal(0) = hip * sin(angulo(0) * PI / 180) * cos(angulo(1) * PI / 180);
-	eyeReal(1) = hip * sin(angulo(1) * PI / 180);
-	eyeReal(2) = hip * cos(angulo(0) * PI / 180) * sin(angulo(1 ) * PI / 180);
+	eye = {eye(0), (float)cos(angle*PI/180)*eye(1) - (float)sin(angle*PI/180)*eye(2) , (float)sin(angle*PI/180)*eye(1) + (float)cos(angle*PI/180)*eye(2)};
 
-	std::cout << "Eye Después Transformación Y:\t" << eyeReal(0) << ", \t" << eyeReal(1) << ", \t" << eyeReal(2) << std::endl;
-	*/
+	//std::cout << "eye en el origen :" << eye(0) << "," << eye(1) << "," << eye(2) << std::endl;
 
-	
+	// Ecuaciones para calcular las nuevas coordenadas de la cámara en el mundo
+	s = u(0) * v(1) * n(2) + u(1) * v(2) * n(0) + u(2) * v(0) * n(1) - (u(2) * v(1) * n(0) + u(1) * v(0) * n(2) + u(0) * v(2) * n(1));
 
-	Tupla3f n, u, v; 
-	//int a = eyeInicial(2) > 0 ? 1: -1;
-	//int a = eyeReal(2) > 0 ? 1: -1;
-	//int a = eyeReal(2) > 0 ? 1: -1;
-	std::cout << "\nEye Antes Transformación X:\t" << eyeInicial(0) << ", \t" << eyeInicial(1) << ", \t" << eyeInicial(2) << std::endl;
-	// Pasamos de coordenadas del mundo a coordenadas de la cámara
-	cambiaSistemaCoordenadasACoordenadasDeLaCamara(n, u, v);
+	x = eye(0) * v(1) * n(2) + u(1) * v(2) * eye(2) + u(2) * eye(1) * n(1) - (u(2) * v(1) * eye(2) + u(1) * eye(1) * n(2) + eye(0) * v(2) * n(1));
 
-	double hip1 = sqrt(eyeReal(1) * eyeReal(1) + eyeReal(2) * eyeReal(2));
-	std::cout << "Eye Antes Giro X:\t" << eyeReal(0) << ", \t" << eyeReal(1) << ", \t" << eyeReal(2) << std::endl;
+	y = u(0) * eye(1) * n(2) + eye(0) * v(2) * n(0) + u(2) * v(0) * eye(2) - (u(2) * eye(1) * n(0) + eye(0) * v(0) * n(2) + u(0) * v(2) * eye(2));
 
-	//eyeInicial(1) = eyeInicial(1) >= 0 ? (hip * sin(angle * PI / 180)) : (-hip * sin(angle * PI / 180));
-	//float a = (hip * sin(angle * PI / 180)) ; 
-	//float b = eyeInicial(2) >= 0 ? (hip * cos(angle * PI / 180)) : (-hip * cos(angle * PI / 180));
+	z = u(0) * v(1) * eye(2) + u(1) * eye(1) * n(0) + eye(0) * v(0) * n(1) - (eye(0) * v(1) * n(0) + u(1) * v(0) * eye(2) + u(0) * eye(1) * n(1));
 
-	float alfa = angulo(0);
-	float beta = angulo(1);
+	x = x/s;
 
-	
-	if(alfa >= 90 && alfa <= 270){
-		alfa += 270;
-		beta += 180; 
-		up = {0, -1 , 0};
-	}else{
-		up = {0, 1 , 0};
-	}
+	y = y/s;
 
-	if(angulo(0) == 90)
-		up = {-1, 0 , -1};
-	else if( angulo(0) == 270)
-		up = {1, 0, 1};
-	//up(1) = cos(angulo(0) * PI / 180);
-	//up(2) = cos(angulo(0) * PI / 180);
+	z = z/s;
 
-	
-	
-	cout << "angulo(0) = " << angulo(0) << endl;
-	cout << "angulo(1) = " << angulo(1) << endl;
-	//cout << "alfa = " << alfa<< endl;
-	//cout << "beta = " << beta << endl;
-	cout << "hip1 = " << hip1 << endl;
-	//cout << "hip2 = " << hip2 << endl;
+	eye = {x, y, z};
 
-	//eyeReal = {hip2 * cos(angulo(1)*PI/180), hip1 * sin(angulo(0) * PI / 180), hip1 * cos(angulo(0) * PI / 180) + hip2 * sin(angulo(1) * PI / 180)};
-	//eyeReal = {hip * cos(angulo(1)*PI/180), hip * sin(angulo(0) * PI / 180), hip * cos(angulo(0) * PI / 180) * sin(angulo(1) * PI / 180)};
-	//eyeReal = {hip2 * cos(angulo(1)*PI/180), eyeReal(1), hip2 * sin(angulo(1) * PI / 180)};
-	
-	//eyeReal = {eyeReal(0), hip1 * sin(beta * PI / 180), hip1 * abs(cos(beta * PI / 180))};
-	eyeReal = {eyeReal(0), hip1 * sin(angulo(0) * PI / 180), hip1 * cos(angulo(0) * PI / 180)};
-	std::cout << "Eye Después Giro X:\t" << eyeReal(0) << ", \t" << eyeReal(1) << ", \t" << eyeReal(2) << std::endl;
+	//std::cout << "eye final " << x << "," << y << "," << z << std::endl;
 
-	// Pasamos de coordenadas de la cámara a coordenadas del mundo
-	cambiaSistemaCoordenadasACoordenadasDelMundo(n, u, v);
-	std::cout << "Eye Después Transformación X:\t" << eyeReal(0) << ", \t" << eyeReal(1) << ", \t" << eyeReal(2) << std::endl;
-	//std::cout << "Eye eyeInicial X:\t" << eyeInicial(0) << ", \t" << eyeInicial(1) << ", \t" << eyeInicial(2) << std::endl << endl;
+	// Cálculo análogo al de la posición de la cámara
+	// Se busca que el vector del viewUp mantenga el ángulo respecto a VPN de la cámara
+	up = {producto_escalar(up, u, 3), producto_escalar(up, v, 3), producto_escalar(up, n, 3)};
 
-	
-	if(angulo(0) >= 90 && angulo(0) <= 270){
-		//eyeReal(1) *= -1;
-		up(1) = -1; 
-	}
-	else{
-		up(0) = 0;
-		up(1) = 1;
-		up(2) = 0;
-	}
-	
-	
-	for(int i= 0; i < 3; i++)
-		if(eyeReal(i) < 0.000001 && eyeReal(i) > -0.000001)
-			eyeReal(i) = 0; 
-	
+	// Cálculo del giro
 
-	int a = eyeReal(2) > 0 ? 1: -1;
-	//int a = 1; 
-	
-	//Giro en Y
-	double hip2 = sqrt(eyeReal(0) * eyeReal(0) + eyeReal(2) * eyeReal(2));
-	eyeReal = {hip2 * cos(beta * PI/180), eyeReal(1), a * hip2 * sin(angulo(1) * PI / 180)};
-	//eyeReal = {hip2 * cos(angulo(1) * PI / 180), eyeReal(1), a * hip2 * sin(angulo(1) * PI / 180)};
-	std::cout << "Eye Después Transformación Y:\t" << eyeReal(0) << ", \t" << eyeReal(1) << ", \t" << eyeReal(2) << std::endl;
-	std::cout << "UP = :\t" << up(0) << ", \t" << up(1) << ", \t" << up(2) << std::endl;
+	up = {up(0), (float)cos(angle*PI/180)*up(1) - (float)sin(angle*PI/180)*up(2) , (float)sin(angle*PI/180)*up(1) + (float)cos(angle*PI/180)*up(2)};
 
-	//if( a > 0 && eyeInicial(2) < 0 || a < 0 && eyeInicial(2) > 0)
-	for(int i= 0; i < 3; i++)
-		if(eyeReal(i) < 0.000001 && eyeReal(i) > -0.000001)
-			eyeReal(i) = 0; 
+	// Nuevas coordenadas del vector viewUp
+      s = u(0) * v(1) * n(2) + u(1) * v(2) * n(0) + u(2) * v(0) * n(1) - (u(2) * v(1) * n(0) + u(1) * v(0) * n(2) + u(0) * v(2) * n(1));
 
-	//up = {eyeReal(0), up(1), eyeReal(2)};
-		//up = {-sin(alfa * PI / 180) * sin(beta * PI / 180), cos(alfa * PI / 180), -sin(alfa * PI / 180) * cos(beta * PI / 180)};
-	std::cout << "Eye Después Transformación Y:\t" << eyeReal(0) << ", \t" << eyeReal(1) << ", \t" << eyeReal(2) << std::endl;
-	std::cout << "UP = :\t" << up(0) << ", \t" << up(1) << ", \t" << up(2) << std::endl;
-	//up(1) = cos(angulo(0));
-	
+	x = up(0) * v(1) * n(2) + u(1) * v(2) * up(2) + u(2) * up(1) * n(1) - (u(2) * v(1) * up(2) + u(1) * up(1) * n(2) + up(0) * v(2) * n(1));
+
+	y = u(0) * up(1) * n(2) + up(0) * v(2) * n(0) + u(2) * v(0) * up(2) - (u(2) * up(1) * n(0) + up(0) * v(0) * n(2) + u(0) * v(2) * up(2));
+
+	z = u(0) * v(1) * up(2) + u(1) * up(1) * n(0) + up(0) * v(0) * n(1) - (up(0) * v(1) * n(0) + u(1) * v(0) * up(2) + u(0) * up(1) * n(1));
+
+	x = x/s;
+
+	y = y/s;
+
+	z = z/s;
+
+	// Normalizar
+	float up_normal = sqrt(x*x + y*y + z*z);
+
+	up = {x/up_normal, y/up_normal, z/up_normal};
+
+	//std::cout << "up final " << x << "," << y << "," << z << std::endl;
 
 }
 
-void Camara::girarX(double angle){
-	
-	angulo(0) += angle;
-	if(angulo(0) < 0)
-		angulo(0) += 360;
-	else if (angulo(0) > 360)
-		angulo(0) -= 360;
+void Camara::rotarYExaminar (float angle){
 
-	girar();
+	//std::cout << "eye original :" << eye(0) << "," << eye(1) << "," << eye(2) << std::endl;
 
-	/*
-	Tupla3f n, u, v; 
-	cambiaSistemaCoordenadasACoordenadasDeLaCamara(n, u, v);
+	Tupla3f n, u, v, vup, xd;
 
-	std::vector<Tupla3f> a, b, c;
+	float modulo_u, modulo_v, modulo_n;
 
-	c.push_back(u);
-	c.push_back(v); 
-	c.push_back(n); 
+	float x, y, z, s;
 
-	a = traspuesta(c);
-	//a = c;
-	//c = traspuesta(a);
+	n = eye - at;
 
-	b = {{1,          0,           0}, 
-	     {0, cos(angulo(0) * PI / 180), sin(angulo(0) * PI / 180) }, 
-	     {0, sin(angulo(0) * PI / 180), cos(angulo(0) * PI / 180)} };
+	modulo_n = sqrt(n(0)*n(0) + n(1)*n(1) + n(2)*n(2));
 
-	//imprimeMatriz("\n\nimprimeMatriz A", a);
-	//imprimeMatriz("imprimeMatriz B", b);
+	n = {n(0)/modulo_n, n(1)/modulo_n, n(2)/modulo_n};
 
-	a = producto_matricial3x3(a,b);
-	//imprimeMatriz("\nimprimeMatriz axb" ,a);
+	//std::cout << "eje z: " << n(0) << "," << n(1) << "," << n(2) << std::endl;
 
-	//imprimeMatriz("imprimeMatriz C", c);
+	vup = up - at;
 
-	 
-	a = producto_matricial3x3(a,c);
-	//imprimeMatriz("\n\nimprimeMatriz axbxc", a); 
-	eyeReal = producto_matricial3x1(a,eyeInicial);
-	std::cout << "Eye Después Transformación X:\t" << eyeReal(0) << ", \t" << eyeReal(1) << ", \t" << eyeReal(2) << std::endl;
-	
-	//if( eyeReal(2) < 0 )
-	//	up(1) = -1;  
+	u = {vup(1) * n(2) - vup(2) * n(1), vup(2) * n(0) - vup(0) * n(2), vup(0) * n(1) - vup(1) * n(0)};
 
-	//imprimeMatriz("\n\nimprimeMatriz A", a);
-	//imprimeMatriz("imprimeMatriz B", b);
-	//imprimeMatriz("imprimeMatriz C", c);
-	//imprimeMatriz("imprimeMatriz C"c);
-	*/
+	modulo_u = sqrt(u(0)*u(0) + u(1)*u(1) + u(2)*u(2));
 
-	/*
-	angulo(0) += angle;
-	if(angulo(0) < 0)
-		angulo(0) += 360;
-	else if (angulo(0) > 360)
-		angulo(0) -= 360;
+	u = {u(0)/modulo_u, u(1)/modulo_u, u(2)/modulo_u};
 
+	//std::cout << "eje x: " << u(0) << "," << u(1) << "," << u(2) << std::endl;
 
-	girar();
-	*/
-	/*Tupla3f n, u, v; 
-	//int a = eyeInicial(2) > 0 ? 1: -1;
-	int a = eyeReal(2) > 0 ? 1: -1;
-	
-	std::cout << "\nEye Antes Transformación X:\t" << eyeInicial(0) << ", \t" << eyeInicial(1) << ", \t" << eyeInicial(2) << std::endl;
-	// Pasamos de coordenadas del mundo a coordenadas de la cámara
-	cambiaSistemaCoordenadasACoordenadasDeLaCamara(n, u, v);
+	v = {n(1) * u(2) - n(2) * u(1), n(2) * u (0) - n(0) * u(2), n(0) * u(1) - n(1) * u(0)};
 
-	angulo(0) += angle;
-	angle = angulo(0);
+	modulo_v = sqrt(v(0)*v(0) + v(1)*v(1) + v(2)*v(2));
 
-	double hip = sqrt(eyeInicial(1) * eyeInicial(1) + eyeInicial(2) * eyeInicial(2));
-	std::cout << "Eye Antes Giro X:\t" << eyeInicial(0) << ", \t" << eyeInicial(1) << ", \t" << eyeInicial(2) << std::endl;
-	cout << "cos(" << angle <<" * PI / 180) = " << cos(angle * PI / 180) << endl;
-	cout << "sin(" << angle <<" * PI / 180) = " << sin(angle * PI / 180) << endl;
-	cout << "hip = " << hip << endl;
-	//eyeInicial(1) = eyeInicial(1) >= 0 ? (hip * sin(angle * PI / 180)) : (-hip * sin(angle * PI / 180));
-	//float a = (hip * sin(angle * PI / 180)) ; 
-	//float b = eyeInicial(2) >= 0 ? (hip * cos(angle * PI / 180)) : (-hip * cos(angle * PI / 180));
+	v = {v(0)/modulo_v, v(1)/modulo_v, v(2)/modulo_v};
 
-	eyeReal = {eyeInicial(0), hip * sin(angle * PI / 180), hip * cos(angle * PI / 180)};
-	std::cout << "Eye Después Giro X:\t" << eyeInicial(0) << ", \t" << eyeInicial(1) << ", \t" << eyeInicial(2) << std::endl;
+	//std::cout << "eje y: " << v(0) << "," << v(1) << "," << v(2) << std::endl;
 
-	// Pasamos de coordenadas de la cámara a coordenadas del mundo
-	cambiaSistemaCoordenadasACoordenadasDelMundo(n, u, v);
-	std::cout << "Eye Después Transformación X:\t" << eyeInicial(0) << ", \t" << eyeInicial(1) << ", \t" << eyeInicial(2) << std::endl << endl;
+	eye = {producto_escalar(eye, u, 3), producto_escalar(eye, v, 3), producto_escalar(eye, n, 3)};
 
-	//if( a > 0 && eyeInicial(2) < 0 || a < 0 && eyeInicial(2) > 0)
-	if( a > 0 && eyeReal(2) < 0 || a < 0 && eyeReal(2) > 0)
-		up(1) = -up(1);  
+	//std::cout << "eye escalar :" << eye(0) << "," << eye(1) << "," << eye(2) << std::endl;
 
-	*/
-}
+	eye = {(float)cos(angle*PI/180)*eye(0) - (float)sin(angle*PI/180)*eye(2), eye(1), (float)sin(angle*PI/180)*eye(0) + (float)cos(angle*PI/180)*eye(2)};
 
+	//std::cout << "eye en el origen :" << eye(0) << "," << eye(1) << "," << eye(2) << std::endl;
 
+	s = u(0) * v(1) * n(2) + u(1) * v(2) * n(0) + u(2) * v(0) * n(1) - (u(2) * v(1) * n(0) + u(1) * v(0) * n(2) + u(0) * v(2) * n(1));
 
-void Camara::girarY(double angle){
+	x = eye(0) * v(1) * n(2) + u(1) * v(2) * eye(2) + u(2) * eye(1) * n(1) - (u(2) * v(1) * eye(2) + u(1) * eye(1) * n(2) + eye(0) * v(2) * n(1));
 
-	/*
-	Tupla3f n, u, v; 
-	cambiaSistemaCoordenadasACoordenadasDeLaCamara(n, u, v);
+	y = u(0) * eye(1) * n(2) + eye(0) * v(2) * n(0) + u(2) * v(0) * eye(2) - (u(2) * eye(1) * n(0) + eye(0) * v(0) * n(2) + u(0) * v(2) * eye(2));
 
-	std::vector<Tupla3f> a, b, c;
+	z = u(0) * v(1) * eye(2) + u(1) * eye(1) * n(0) + eye(0) * v(0) * n(1) - (eye(0) * v(1) * n(0) + u(1) * v(0) * eye(2) + u(0) * eye(1) * n(1));
 
-	c.push_back(u);
-	c.push_back(v); 
-	c.push_back(n); 
+	x = x/s;
 
-	a = traspuesta(c);
-	//a = c;
-	//c = traspuesta(a);
+	y = y/s;
 
-	angulo(1) += angle;
-	if(angulo(1) < 0)
-		angulo(1) += 360;
-	else if (angulo(1) > 360)
-		angulo(1) -= 360;
+	z = z/s;
 
-	b = {{cos(angle * PI / 180),          0,  -sin(angle * PI / 180)}, 
-	     {					  0,          1,                      0},
-	     {sin(angle * PI / 180),          0,  cos(angle * PI / 180)}};
+	eye = {x, y, z};
 
-	//imprimeMatriz("\n\nimprimeMatriz A", a);
-	//imprimeMatriz("imprimeMatriz B", b);
+	//std::cout << "eye final " << x << "," << y << "," << z << std::endl;
 
-	a = producto_matricial3x3(a,b);
-	//imprimeMatriz("\nimprimeMatriz axb" ,a);
+	up = {producto_escalar(up, u, 3), producto_escalar(up, v, 3), producto_escalar(up, n, 3)};
 
-	//imprimeMatriz("imprimeMatriz C", c);
+	up = {(float)cos(angle*PI/180)*up(0) - (float)sin(angle*PI/180)*up(2), up(1), (float)sin(angle*PI/180)*up(0) + (float)cos(angle*PI/180)*up(2)};
 
-	 
-	a = producto_matricial3x3(a,c);
-	//imprimeMatriz("\n\nimprimeMatriz axbxc", a); 
-	eyeReal = producto_matricial3x1(a,eyeReal);
-	//up = producto_matricial3x1(a,eyeReal);
-	*/
+      s = u(0) * v(1) * n(2) + u(1) * v(2) * n(0) + u(2) * v(0) * n(1) - (u(2) * v(1) * n(0) + u(1) * v(0) * n(2) + u(0) * v(2) * n(1));
 
-	
-	angulo(1) += angle;
-	if(angulo(1) < 0)
-		angulo(1) += 360;
-	else if (angulo(1) > 360)
-		angulo(1) -= 360;
+	x = up(0) * v(1) * n(2) + u(1) * v(2) * up(2) + u(2) * up(1) * n(1) - (u(2) * v(1) * up(2) + u(1) * up(1) * n(2) + up(0) * v(2) * n(1));
 
-	girar();
-	
-	/*
-	Tupla3f n, u, v; 
+	y = u(0) * up(1) * n(2) + up(0) * v(2) * n(0) + u(2) * v(0) * up(2) - (u(2) * up(1) * n(0) + up(0) * v(0) * n(2) + u(0) * v(2) * up(2));
 
-	std::cout << "\nEye Antes Transformación X:\t" << eyeInicial(0) << ", \t" << eyeInicial(1) << ", \t" << eyeInicial(2) << std::endl;
-	// Pasamos de coordenadas del mundo a coordenadas de la cámara
-	cambiaSistemaCoordenadasACoordenadasDeLaCamara(n, u, v);
-	
-	angulo(1) += angle;
-	angle = angulo(1);
+	z = u(0) * v(1) * up(2) + u(1) * up(1) * n(0) + up(0) * v(0) * n(1) - (up(0) * v(1) * n(0) + u(1) * v(0) * up(2) + u(0) * up(1) * n(1));
 
-	double hip = sqrt(eyeInicial(1)*eyeInicial(1) + eyeInicial(2)*eyeInicial(2));
-	std::cout << "Eye Antes Giro X:\t" << eyeInicial(0) << ", \t" << eyeInicial(1) << ", \t" << eyeInicial(2) << std::endl;
-	cout << "cos(" << angle <<" * PI / 180) = " << cos(angle * PI / 180) << endl;
-	cout << "sin(" << angle <<" * PI / 180) = " << sin(angle * PI / 180) << endl;
-	cout << "hip = " << hip << endl;
-	// Aplicamos el giro
-	eyeReal = {sin(angle*PI/180)*hip, eyeInicial(1), cos(angle*PI/180)*hip};
-	std::cout << "Eye Después Giro X:\t" << eyeInicial(0) << ", \t" << eyeInicial(1) << ", \t" << eyeInicial(2) << std::endl;
+	x = x/s;
 
-	// Pasamos de coordenadas de la cámara a coordenadas del mundo
-	cambiaSistemaCoordenadasACoordenadasDelMundo(n, u, v);
-	std::cout << "Eye Después Transformación X:\t" << eyeInicial(0) << ", \t" << eyeInicial(1) << ", \t" << eyeInicial(2) << std::endl << endl;
-	*/
+	y = y/s;
+
+	z = z/s;
+
+	float up_normal = sqrt(x*x + y*y + z*z);
+
+	up = {x/up_normal, y/up_normal, z/up_normal};
+
+	//std::cout << "up final " << x << "," << y << "," << z << std::endl;
 
 }
-void Camara::girarZ(double angle){
-	
+
+void Camara::rotarZExaminar (float angulo){
+
+	float hip = sqrt(eye(0)*eye(0) + eye(1)*eye(1));
+
+	mover(sin(angulo)*hip, cos(angulo)*hip, eye(2));
+
 }
 
-float Camara::producto_escalar(Tupla3f v1, Tupla3f v2){
-	return producto_escalar(v1, v2, 3); 
+void Camara::setObserver(){
+	glMatrixMode(GL_MODELVIEW);
+  	glLoadIdentity();
+	gluLookAt(eye(0), eye(1), eye(2), at(0), at(1), at(2), up(0), up(1), up(2));
+
 }
+
+void Camara::setProyeccion(){
+
+   glMatrixMode( GL_PROJECTION );
+   glLoadIdentity();
+
+	if (tipo)
+		glFrustum(left, right, bottom, top, near, far);
+	else 
+		glOrtho(left, right, bottom, top, near, far);
+
+	//std::cout << "left: " << left << " right: " << right << " bottom: " << bottom << " top: " << top << std::endl;
+
+}
+
+void Camara::mover(float x , float y , float z){
+
+	this->eye = Tupla3f(x, y, z);
+
+}
+
 float Camara::producto_escalar(Tupla3f v1, Tupla3f v2, int d)
 {
 	float resultado = 0;
@@ -514,36 +256,49 @@ float Camara::producto_escalar(Tupla3f v1, Tupla3f v2, int d)
 	return resultado;
 }
 
+void Camara::zoom (float factor){
 
-std::vector<Tupla3f> Camara::traspuesta(std::vector<Tupla3f> a){
-	//cout << "Traspuesta  Antes" << endl; 
-	//imprimeMatriz(a);
-	vector<Tupla3f> salida = {{a[0](0), a[1](0), a[2](0)},
-							  {a[0](1), a[1](1), a[2](1)},
-							  {a[0](2), a[1](2), a[2](2)}};
+	//std::cout << "left: " << left << " right: " << right << " bottom: " << bottom << " top: " << top << std::endl;
 
-	//cout << "Traspuesta  Después" << endl; 
-	//imprimeMatriz(salida);
+    if(factor > 0){
+        left *= factor;
+        right *= factor;
+        bottom *= factor;
+        top *= factor;
+    }else{
+        left /= -factor;
+        right /= -factor;
+        bottom /= -factor;
+        top /= -factor;
+    }
 
-	return salida; 
+	//std::cout << "left: " << left << " right: " << right << " bottom: " << bottom << " top: " << top << std::endl;
 
-}
-
-std::vector<Tupla3f> Camara::producto_matricial3x3(std::vector<Tupla3f> a, std::vector<Tupla3f> b){
-	
-	std::vector<Tupla3f> c = traspuesta(b);
-
-	vector<Tupla3f> salida = {{producto_escalar(a[0],c[0]), producto_escalar(a[0],c[1]), producto_escalar(a[0],c[2])},
-							  {producto_escalar(a[1],c[0]), producto_escalar(a[1],c[1]), producto_escalar(a[1],c[2])},
-							  {producto_escalar(a[2],c[0]), producto_escalar(a[2],c[1]), producto_escalar(a[2],c[2])},};
-
-	return salida; 
 
 }
 
-Tupla3f Camara::producto_matricial3x1(std::vector<Tupla3f> a, Tupla3f b){
-	Tupla3f salida = {producto_escalar(a[0],b), producto_escalar(a[1], b), producto_escalar(a[2],b)};
+void Camara::redimensionar(int newWidth, int newHeight){
 
-	return salida; 
+   this->top = 0.84*near;
+   this->bottom = -this->top;
+   this->right = newWidth/newHeight * this->top;
+   this->left = -this->right;
+
 }
 
+void Camara::inicioAnimaciones( )
+{
+   using namespace std::chrono ;
+   ultima_actu = steady_clock::now() ;
+}
+
+void Camara::girar(){
+
+   using namespace std::chrono ;
+
+   const Instante   ahora       =  steady_clock::now();
+   const Duracion_s duracion_s  =  ahora - ultima_actu;
+   ultima_actu = ahora ;
+   rotarYExaminar(duracion_s.count() * 100);
+
+}

@@ -62,5 +62,5 @@ Tetraedro::Tetraedro()
    coordenadas_texturas_vertices.push_back(Tupla2f(0.75,1.0));
    coordenadas_texturas_vertices.push_back(Tupla2f(1.0,1.0));
    
-   texturas.push_back(Textura("./img/Piramides.jpg", coordenadas_texturas_vertices)); 
+   //texturas.push_back(Textura("./img/Piramides.jpg", coordenadas_texturas_vertices)); 
 }

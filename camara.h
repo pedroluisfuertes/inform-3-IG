@@ -1,57 +1,47 @@
+// *****************************************************************************
+//
+// Clase Cámara (práctica 5)
+//
+// *****************************************************************************
+
 #ifndef _CAMARA_H
 #define _CAMARA_H
-#include "aux.h"     // includes de OpenGL/glut/glew, windows, y librería std de C++
 
-class Camara{
+#include "aux.h"
+#include <chrono>
 
-public:
-	Camara();
-	Camara(	Tupla3f eye,
- 			Tupla3f at,
- 			Tupla3f up,
- 			GLdouble left_p, 		GLdouble right_p,
- 			GLdouble bottom_p, 	GLdouble top_p,
- 			GLdouble near_p, 		GLdouble far_p,
- 			bool ortho_p);
+// tipo para registrar instantes de tiempo
+typedef std::chrono::time_point<std::chrono::steady_clock> Instante ;
 
-	void redimensionar( int newWidth, int newHeight );
-	void draw();
-	void drawFrustum();
-	void cambiarPosicion(Tupla3f eyeInicial);
-	void zoom(float incremento);
-	void girarX(double alfa);
-	void girarY(double alfa);
-	void girarZ(double alfa);
+// tipo para duraciones en segundos (como números 'float', con parte fraccionaria)
+typedef std::chrono::duration<float,std::ratio<1,1>> Duracion_s ;
 
-private:
-	void girar();
-	std::vector<Tupla3f> traspuesta(std::vector<Tupla3f> a);
-	std::vector<Tupla3f> producto_matricial3x3(std::vector<Tupla3f> a, std::vector<Tupla3f> b);
-	Tupla3f producto_matricial3x1(std::vector<Tupla3f> a, Tupla3f b);
-	float producto_escalar(Tupla3f v1, Tupla3f v2);
+
+class Camara {
+
+   protected:
+
+	Tupla3f eye;
+	Tupla3f at;
+	Tupla3f up;
+	int tipo; // ORTOGONAL o Perspectiva
+	float left, right, top, bottom, near, far; // o bien a spect, fov, near, far ;
+	Instante ultima_actu;
+
+   public:
+
+	Camara(Tupla3f eye, Tupla3f at, Tupla3f up, int tipo, float left, float right, float top, float bottom, float near, float far) ; // con los parametros necesarios
+	void rotarXExaminar ( float angle ) ;
+	void rotarYExaminar ( float angle ) ;
+	void rotarZExaminar ( float angle ) ;
+	void mover ( float x , float y , float z ) ;
+	void zoom ( float factor ) ;
+	void setObserver ( ) ; // completar
+	void setProyeccion () ;
 	float producto_escalar(Tupla3f v1, Tupla3f v2, int d);
-	void cambiaSistemaCoordenadasACoordenadasDelMundo(Tupla3f &n, Tupla3f &u,Tupla3f &v);
-	void cambiaSistemaCoordenadasACoordenadasDeLaCamara(Tupla3f &n, Tupla3f &u,Tupla3f &v);
-
-	// gluLookAt
-	Tupla3f eyeInicial = {0, 0, 0};
-	Tupla3f eyeReal = {0, 0, 0};
-	Tupla3f at  = {0, 0, 0};
-	Tupla3f up  = {0, 1, 0};
-	//GLdouble eyeX = 0, eyeY = 0, eyeZ = 2;
- 	//GLdouble  atX = 0,  atY = 0,  atZ = 0;
- 	//GLdouble  upX = 0,  upY = 1,  upZ = 0;
-
-
- 	// glFrustum
- 	GLdouble left, right;
- 	GLdouble bottom, top;
- 	GLdouble near, far;
- 	Tupla3f angulo = {0, 0, 0}; 
- 	Tupla3f distancia = {0, 0, 0}; 
- 	//float angX = 0, angY = 90, angZ = 0;
-
- 	bool ortho;
+	void redimensionar ( int newWidth, int newHeight );
+	void inicioAnimaciones();
+	void girar();
 };
 
 #endif

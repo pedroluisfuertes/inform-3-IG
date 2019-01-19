@@ -69,7 +69,7 @@ void Esfera::construir( const int num_vert_perfil, const int num_instancias_perf
 		}
 
 		
-
+		tipo = ESFERA; 
 		crearMalla(perfil, num_instancias_perf, eje, true, true); 
    		inicializar();
 }

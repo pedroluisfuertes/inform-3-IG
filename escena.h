@@ -53,19 +53,7 @@ class Escena
   // Objetos de la escena
     int objeto_actual = 0; // objeto actual (el que se visualiza)
     int num_objetos = 9; // número de objetos 
-    enum Objetos
-    {
-     CUBO = 0, 
-     TETRAEDRO = 1,
-     CILINDRO = 2,
-     CONO = 3,
-     ESFERA = 4,
-     OBJ_PLY = 5,
-     OBJ_JERARQUICO = 6,
-     CUADRO = 7,
-     SELECCION = 8
-
-    };
+    
     enum Estado
     {
      DEFAULT = 0,
@@ -74,7 +62,10 @@ class Escena
      SELECCION_MATERIAL = 3
 
     };
-    std::vector<Objeto*> objetos;
+    std::vector< std::vector<Objeto*> > objetos;
+   std::vector<Tupla3f> posicionesSeleccion;
+   std::vector<std::vector<Tupla3c> > coloresAleatorios;
+   std::vector<Tupla3c> coloresAntes;
     std::vector<Objeto*> objetos_seleccion;
     
     bool botonIzquierdoPulsado = false;
@@ -95,6 +86,8 @@ class Escena
    void leerPLY();
 
    void conmutarAnimaciones();
+   void seleccionar(GLint x, GLint y);
+   Tupla3c leerPixel(GLint x, GLint y);
 
    public:
 

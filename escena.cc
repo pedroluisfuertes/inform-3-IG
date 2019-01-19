@@ -9,6 +9,7 @@ Grupo: 3º A3
 #include "ply_reader.h"
 //#include "malla.h" // objetos: Cubo y otros....
 #include <string>
+#include <time.h>       /* time */
 
 using namespace std;
 
@@ -26,9 +27,10 @@ Escena::Escena()
     Observer_angle_y  = 0.0 ;
 
     ejes.changeAxisSize( 5000 );
+    srand (time(NULL));
     //num_texturas = 2; // se usa para cambiar las texturas 't'
 
-    objetos.resize(num_objetos);
+    //objetos.resize(num_objetos);
     // crear los objetos de las prácticas: Mallas o Jerárquicos.... 
 }
 
@@ -43,13 +45,80 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
 	glClearColor( 1.0, 1.0, 1.0, 1.0 );// se indica cual sera el color para limpiar la ventana	(r,v,a,al)
 
 	glEnable( GL_DEPTH_TEST );	// se habilita el z-bufer
-    objetos[CUBO] = new Cubo();
+    std::vector<Objeto*> v;
+    std::vector<Tupla3c> v2;
+    
+
+    for(int i = 0; i < 10; i++){
+      int nObj; 
+      if( i != SELECCION ){
+        nObj = 1; 
+      }else{
+        nObj = 10; 
+      }
+      for(int j = 0; j < nObj; j++){
+        int obj;
+        if(i != SELECCION)
+          obj = i;
+        else
+          obj = rand() % 5;
+        //cout << "j = " << j << endl; 
+        switch( obj )
+       {  
+          case CUBO :
+            v.push_back(new Cubo());
+          break;
+          case TETRAEDRO :
+            v.push_back(new Tetraedro());
+          break;
+          case CILINDRO :
+            v.push_back(new Cilindro(2,4));
+          break;
+          case CONO :
+            v.push_back(new Cono(2,40));
+          break;
+          case ESFERA :
+            v.push_back(new Esfera(40,40));
+          break;
+          case OBJ_JERARQUICO :
+            v.push_back(new ObjJerarquico());
+          break;
+          case CUADRO:
+            v.push_back(new Cuadro());
+          break;
+          case OBJ_PLY:
+            v.push_back(new ObjPLY("./plys/ant.ply"));
+          break;
+
+        }
+        
+        v2.push_back({rand() % 255, rand() % 255, rand() % 255});
+      }
+      
+      objetos.push_back(v);
+      coloresAleatorios.push_back(v2);
+      v.clear(); 
+  }
+
+    for(int i = 0; i < objetos[SELECCION].size(); i++){
+      posicionesSeleccion.push_back({rand() % 10-5, rand() % 10-5, rand() % 10-5});
+    }
+    //Cubo
+    //v.push_back(new Cubo());
+    
+
+
+    //v.push_back(new Tetraedro());
+    //objetos.push_back(v);
+    //v.clear();
+    /*
     objetos[TETRAEDRO] = new Tetraedro();
     objetos[CILINDRO] = new Cilindro(2,4);
     objetos[CONO] = new Cono(2,40);
     objetos[ESFERA] = new Esfera(40,40);
     objetos[OBJ_JERARQUICO] = new ObjJerarquico();
     objetos[CUADRO] = new Cuadro();
+    */
 
     /* Creamos las luces */
     // Luz 1    
@@ -69,21 +138,23 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
     luces.push_back(new Luz(luz_indice, luz_posicion, luz_ambiente, luz_difusa, luz_especular));
 
     //Cámaras
-    camaras.push_back(new Camara({20,  20, 20}, // Posición
+    camaras.push_back(new Camara({0,  0, 20}, // Posición
                                  {0,0,0}, // Dirección
                                  {0,1,0}, // sentido
-                                 -0.0084, 0.0084,   // Ancho
-                                 -0.0084, 0.0084,   // Alto
-                                 0.1,200, // Profundo
-                                 false));  // Ortogonal
+                                 true,
+                                 -0.5, 0.5,   // Ancho
+                                 -0.5, 0.5,   // Alto
+                                 0.1,200 // Profundo
+                                 ));  // Ortogonal
 
     camaras.push_back(new Camara({0, 20, 20}, // Posición
                                  {0,0,0}, // Dirección
                                  {0,1,0}, // sentido
-                                 -0.0084, 0.0084,   // Ancho
-                                 -0.0084, 0.0084,   // Alto
-                                 2,200, // Profundo
-                                 true)); // Ortogonal
+                                 false,
+                                 -0.5, 0.5,   // Ancho
+                                 -0.5, 0.5,   // Alto
+                                 2,200 // Profundo
+                                 )); // Ortogonal
 
     //camaras.push_back(new Camara());
 
@@ -110,20 +181,26 @@ void Escena::dibujar_luces(){
 void Escena::dibujar_objeto_actual()
 {
    using namespace std ;
-
-   if(objeto_actual == OBJ_PLY){
-      if(leer_ply)
-        leerPLY();
-   }else{
-      leer_ply = true;
-      
-  }
+   //cout << "objetos[objeto_actual].size() = " << objetos[objeto_actual].size() << endl; 
+   for(int i = 0; i < objetos[objeto_actual].size(); i++){
+    if(objetos[objeto_actual][i]->getTipo() == OBJ_PLY && leer_ply)
+      leerPLY();
+    if(objeto_actual == SELECCION){
+      glPushMatrix();
+      glTranslatef(posicionesSeleccion[i](0),posicionesSeleccion[i](1),posicionesSeleccion[i](2));
+      objetos[objeto_actual][i]->draw((ModoVis) modo_actual, modo_diferido);
+      glPopMatrix();
+    }else
+      objetos[objeto_actual][i]->draw((ModoVis) modo_actual, modo_diferido);
+   }
 
 //objetos[CUADRO] = new Cuadro();
+   /*
   if(objeto_actual == SELECCION)
         dibuja_seleccion();
-  else
-    objetos[objeto_actual]-> draw((ModoVis) modo_actual, modo_diferido);
+  else*/
+    
+      
   
 }
 
@@ -146,9 +223,9 @@ void Escena::leerPLY(){
 
     ply::leer_cabecera(ruta, num_vertices, num_caras);
     if(num_caras > 0){
-      objetos[OBJ_PLY] = new ObjPLY(ruta);
+      objetos[OBJ_PLY][0] = new ObjPLY(ruta);
     }else{
-      objetos[OBJ_PLY] = new ObjRevolucion(ruta);
+      objetos[OBJ_PLY][0] = new ObjRevolucion(ruta);
     }
     leer_ply = false;
 
@@ -164,10 +241,13 @@ void Escena::leerPLY(){
 
 void Escena::dibujar()
 {
+
   glEnable( GL_NORMALIZE );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // Limpiar la pantalla
 	//change_observer();
-  camaras[camaraActual]->draw();
+
+  camaras[camaraActual]->setProyeccion();
+  camaras[camaraActual]->setObserver();
   bool lucesEncendidas = glIsEnabled(GL_LIGHTING);
   if(lucesEncendidas)
     glDisable(GL_LIGHTING);
@@ -201,6 +281,7 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
          break ;
       case 'o' :
       case 'O' :
+        leer_ply = true; 
          // activar siguiente objeto
          objeto_actual = (objeto_actual+1) % objetos.size() ;
          cout << "Objeto actual == " << objeto_actual << endl ;
@@ -223,14 +304,16 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
         //cout  << camaras.size() << endl; 
       break;
       case 'C' :
-        objetos[objeto_actual]->siguienteColor();
+        for(int i = 0; i <objetos[objeto_actual].size(); i++)
+          objetos[objeto_actual][i]->siguienteColor();
       break ;
       case 'M' :
-        objetos[objeto_actual]->siguienteMaterial();
+        for(int i = 0; i <objetos[objeto_actual].size(); i++)
+          objetos[objeto_actual][i]->siguienteMaterial();
       break ;
       case 'p' :
       case 'P' :
-        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->siguienteParametro();
+        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO][0])->siguienteParametro();
       break ;
       case 'a' :
       case 'A' :
@@ -253,16 +336,16 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
         luces[1]->activar();
       break ;
       case 'Z' :
-        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->incrementaParamAct();
+        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO][0])->incrementaParamAct();
       break ;
       case 'z' :
-        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->decrementaParamAct();
+        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO][0])->decrementaParamAct();
       break ;
       case '>' :
-        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->decelerar();
+        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO][0])->decelerar();
       break ;
       case '<' :
-        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->acelerar();
+        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO][0])->acelerar();
       break ;
       case '1' :
         objeto_actual = CUBO;
@@ -280,6 +363,7 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
         objeto_actual = ESFERA;
       break ;
       case '6' :
+        leer_ply = true; 
         objeto_actual = OBJ_PLY;
       break ;
       case '7' :
@@ -289,6 +373,7 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
         objeto_actual = CUADRO;
       break ;
       case '9' :
+        leer_ply = true; 
         objeto_actual = SELECCION;
       break ;
       case '!' :
@@ -318,7 +403,7 @@ void Escena::conmutarAnimaciones(){
     activarAnimaciones = !activarAnimaciones;
     if(activarAnimaciones){
       if(objeto_actual == OBJ_JERARQUICO){
-        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->inicioAnimaciones( );
+        static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO][0])->inicioAnimaciones( );
       }
         glutIdleFunc( funcion_desocupado );
         luces[1]->inicioGiro();
@@ -329,10 +414,11 @@ void Escena::conmutarAnimaciones(){
 
 void Escena::mgeDesocupado(){
   if(objeto_actual == OBJ_JERARQUICO){
-    static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO])->actualizarEstado( );
+    static_cast<ObjJerarquico*>(objetos[OBJ_JERARQUICO][0])->actualizarEstado( );
   }
   luces[1]->gira();
   glutPostRedisplay();
+  camaras[camaraActual]->rotarYExaminar(0.05);
 }
 //**************************************************************************
 
@@ -350,7 +436,8 @@ void Escena::mouseFunc(GLint button, GLint state, GLint x, GLint y){
     cy = y;
   break;
   case GLUT_RIGHT_BUTTON:
-    //Selecciono triángulo
+    if(state == GLUT_DOWN)
+     seleccionar(x, y);
   break;
   case 3:
     // Rueda del ratón zoon-
@@ -371,16 +458,16 @@ void Escena::motionFunc( int x, int y){
   if(botonIzquierdoPulsado){
     if(cx > x)
       //Observer_angle_y--;
-      camaras[camaraActual]->girarY(-ang);
+      camaras[camaraActual]->rotarYExaminar(-ang);
     else if(cx < x)
-      camaras[camaraActual]->girarY(ang);
+      camaras[camaraActual]->rotarYExaminar(ang);
       //Observer_angle_y++;
 
     if (cy > y)
-      camaras[camaraActual]->girarX(-ang);
+      camaras[camaraActual]->rotarXExaminar(-ang);
       //Observer_angle_x--;
     else if(cy < y)
-      camaras[camaraActual]->girarX(ang);
+      camaras[camaraActual]->rotarXExaminar(ang);
       //Observer_angle_x++;
 
     cx = x;
@@ -396,19 +483,19 @@ void Escena::teclaEspecial( int Tecla1, int x, int y )
    switch ( Tecla1 )
    {
 	   case GLUT_KEY_LEFT:
-          camaras[camaraActual]->girarY(-ang);
+          camaras[camaraActual]->rotarYExaminar(ang);
          //Observer_angle_y-- ;
          break;
 	   case GLUT_KEY_RIGHT:
-          camaras[camaraActual]->girarY(ang);
+          camaras[camaraActual]->rotarYExaminar(-ang);
          //Observer_angle_y++ ;
          break;
 	   case GLUT_KEY_UP:
-        camaras[camaraActual]->girarX(ang);
+        camaras[camaraActual]->rotarXExaminar(ang);
          //Observer_angle_x-- ;
          break;
 	   case GLUT_KEY_DOWN:
-          camaras[camaraActual]->girarX(-ang);
+          camaras[camaraActual]->rotarXExaminar(-ang);
          //Observer_angle_x++ ;
          break;
 	   case GLUT_KEY_PAGE_UP:
@@ -489,11 +576,7 @@ void Escena::dibuja_seleccion() {
     for(int j = 0; j < m; j++) {
       glPushMatrix();
       switch (i*n+j) { // Un color para cada pato
-        case 0: glColor3ub(255,0,0);break;
-        case 1: glColor3ub(0,255,0);break;
-        case 2: glColor3ub(0,0,255);break;
-        case 3: glColor3ub(250,0,250);break;
-        default: glColor3ub(250,0,250);break;
+
     }
 
     glTranslatef(i*3.0,0,-j * 3.0);
@@ -507,3 +590,87 @@ void Escena::dibuja_seleccion() {
   //cout << "final 2" << endl; 
 
  }
+
+void Escena::seleccionar(GLint x, GLint y){
+
+
+    glEnable( GL_NORMALIZE );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // Limpiar la pantalla
+    //change_observer();
+
+    //camaras[camaraActual]->setProyeccion();
+    //camaras[camaraActual]->setObserver();
+    //Le damos un color ramdom
+
+    for(int i = 0; i < objetos[objeto_actual].size(); i++){
+      cout << "Color actual (Antes) = " << (int) objetos[objeto_actual][i]->getColorActual()[0](0) << "\t" << (int) objetos[objeto_actual][i]->getColorActual()[0](1) << "\t" << (int) objetos[objeto_actual][i]->getColorActual()[0](2) <<endl;  
+      coloresAntes.push_back(objetos[objeto_actual][i]->getColorActual()[0]);
+      objetos[objeto_actual][i]->setColorActual(coloresAleatorios[objeto_actual][i]);
+    }
+    // Dibujamos el objeto
+    dibujar_objeto_actual();
+
+
+
+  Tupla3c colorRamdom, colorAntes; 
+  int nSeleccionado = -1; 
+  // Selección
+  for(int i = 0; i < objetos[objeto_actual].size(); i++){
+    colorRamdom = coloresAleatorios[objeto_actual][i];
+    //objetos[objeto_actual][i]->draw((ModoVis) modo_actual, modo_diferido);
+    Tupla3c colorsel = leerPixel(x,y);
+    cout << "colorsel = " << (int) colorsel(0) << "\t" << (int) colorsel(1) << "\t" << (int) colorsel(2) << "\t" << endl;
+    cout << "colorRamdom = " << (int) colorRamdom(0) << "\t" << (int) colorRamdom(1) << "\t" << (int) colorRamdom(2) << "\t" << endl;
+    if(colorsel(0) == colorRamdom(0) && 
+       colorsel(1) == colorRamdom(1) &&
+       colorsel(2) == colorRamdom(2) ){       
+       nSeleccionado = i; 
+       cout << "Se ha seleccionado un objeto tipo " << objetos[objeto_actual][i]->getTipo() << endl; 
+    }
+  }
+
+  // Le devolvemos el color original
+  for(int i = 0; i < objetos[objeto_actual].size(); i++){
+      objetos[objeto_actual][i]->setColorActual(coloresAntes[i]);
+      cout << "Color actual (Después) = " << (int) objetos[objeto_actual][i]->getColorActual()[0](0) << "\t" << (int) objetos[objeto_actual][i]->getColorActual()[0](1) << "\t" << (int) objetos[objeto_actual][i]->getColorActual()[0](2) <<endl;  
+  }
+  // Cambiamos el estado
+  if(nSeleccionado != -1)
+    objetos[objeto_actual][nSeleccionado]->seleccionado();
+
+  coloresAntes.clear();
+
+}
+
+Tupla3c Escena::leerPixel(GLint x, GLint y){
+
+  GLint viewport[4];
+
+  glGetIntegerv(GL_VIEWPORT, viewport);
+  //glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(GLubyte *) &pixel[0]);
+
+  vector< unsigned int > pixels(3);
+  Tupla3c salida; 
+  //cout << "x = " << x << endl; 
+  //cout << "y = " << y << endl; 
+
+  GLsizei width = 1;
+  GLsizei height = 1; 
+  GLenum format = GL_RGB;
+  GLenum type = GL_UNSIGNED_INT;
+  GLvoid * data = pixels.data();
+
+  glReadPixels( x, viewport[3]-y,
+                     width,
+                     height,
+                     format,
+                     type,
+                     data);
+
+  for(int i = 0; i < pixels.size(); i++)
+    salida(i) = pixels[i];
+
+  //cout << "Pixel R = " << salida(0) << "\tPixel G = " << salida(1) << "\tPixel B = " << salida(2) <<endl;  
+
+  return salida; 
+}
