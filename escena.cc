@@ -19,12 +19,6 @@ using namespace std;
 
 Escena::Escena()
 {
-  
-    Front_plane       = 0.1;
-    Back_plane        = 2000.0;
-    Observer_distance = 2.0;
-    Observer_angle_x  = 0.0 ;
-    Observer_angle_y  = 0.0 ;
 
     ejes.changeAxisSize( 5000 );
     srand (time(NULL));
@@ -46,8 +40,6 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
 
 	glEnable( GL_DEPTH_TEST );	// se habilita el z-bufer
     std::vector<Objeto*> v;
-    std::vector<Tupla3c> v2;
-    
 
     for(int i = 0; i < 9; i++){
       int nObj; 
@@ -102,11 +94,9 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
           v[v.size()-1]->setPosicion({0, 0, 0});
         }
 
-        v2.push_back({rand() % 255, rand() % 255, rand() % 255});
       }
       
       objetos.push_back(v);
-      //coloresAleatorios.push_back(v2);
       v.clear(); 
   }
 
@@ -154,23 +144,36 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
                                   0.1, 100 // Profundo
                                  ));  // Ortogonal
 
-    camaras.push_back(new Camara({0, 20, 20}, // Posición
-                                 {0,0,0}, // Dirección
-                                 {0,1,0}, // sentido
-                                 false,
+    camaras.push_back(new Camara({0,  60, 0}, // Posición
+                                 {0, 0, 0}, // Dirección
+                                 {1, 0, 0}, // sentido
+                                 true,
                                  -0.5, 0.5,   // Ancho
                                  -0.5, 0.5,   // Alto
+                                  0.1, 100 // Profundo
+                                 ));  // Ortogonal
+    camaras.push_back(new Camara({60,  0, 0}, // Posición
+                                 {0,0,0}, // Dirección
+                                 {0,1,0}, // sentido
+                                 true,
+                                 -0.5, 0.5,   // Ancho
+                                 -0.5, 0.5,   // Alto
+                                  0.1, 100 // Profundo
+                                 ));  // Ortogonal
+
+    camaras.push_back(new Camara({0, 0, 60}, // Posición
+                                 {0,0,0}, // Dirección
+                                 {0,1,0}, // sentido
+                                 true,
+                                 -5, 5,   // Ancho
+                                 -5, 5,   // Alto
                                  2,200 // Profundo
                                  )); // Ortogonal
 
     //camaras.push_back(new Camara());
 
-	/*Width  = UI_window_width/10;
-	Height = UI_window_height/10;
-
-   change_projection( float(UI_window_width)/float(UI_window_height) );
-	glViewport( 0, 0, UI_window_width, UI_window_height );*/
-  //redimensionar( UI_window_width, UI_window_height );
+    Width = UI_window_width;
+    Height = UI_window_height;
 
 }
 
@@ -249,11 +252,12 @@ void Escena::leerPLY(){
 
 void Escena::dibujar()
 {
-
   glEnable( GL_NORMALIZE );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // Limpiar la pantalla
 	//change_observer();
 
+  /**** CAMARA 1 ****/
+  glViewport( 0, Height/2, Width/2, Height/2 );
   camaras[camaraActual]->setProyeccion();
   camaras[camaraActual]->setObserver();
   bool lucesEncendidas = glIsEnabled(GL_LIGHTING);
@@ -264,6 +268,45 @@ void Escena::dibujar()
     glEnable(GL_LIGHTING);
   dibujar_luces();
 	dibujar_objeto_actual();
+
+  /**** CAMARA 2 ****/
+  glViewport( Width/2, Height/2, Width/2, Height/2 );
+  camaras[(camaraActual + 1) % camaras.size()]->setProyeccion();
+  camaras[(camaraActual + 1) % camaras.size()]->setObserver();
+  lucesEncendidas = glIsEnabled(GL_LIGHTING);
+  if(lucesEncendidas)
+    glDisable(GL_LIGHTING);
+  ejes.draw();
+  if(lucesEncendidas)
+    glEnable(GL_LIGHTING);
+  dibujar_luces();
+  dibujar_objeto_actual();
+
+  /**** CAMARA 3 ****/
+  glViewport( 0, 0, Width/2, Height/2 );
+  camaras[(camaraActual + 2) % camaras.size()]->setProyeccion();
+  camaras[(camaraActual + 2) % camaras.size()]->setObserver();
+  lucesEncendidas = glIsEnabled(GL_LIGHTING);
+  if(lucesEncendidas)
+    glDisable(GL_LIGHTING);
+  ejes.draw();
+  if(lucesEncendidas)
+    glEnable(GL_LIGHTING);
+  dibujar_luces();
+  dibujar_objeto_actual();
+
+  /**** CAMARA 4 ****/
+  glViewport( Width/2, 0, Width/2, Height/2 );
+  camaras[(camaraActual + 3) % camaras.size()]->setProyeccion();
+  camaras[(camaraActual + 3) % camaras.size()]->setObserver();
+  lucesEncendidas = glIsEnabled(GL_LIGHTING);
+  if(lucesEncendidas)
+    glDisable(GL_LIGHTING);
+  ejes.draw();
+  if(lucesEncendidas)
+    glEnable(GL_LIGHTING);
+  dibujar_luces();
+  dibujar_objeto_actual();
 
 }
 
@@ -471,6 +514,9 @@ void Escena::mgeDesocupado(){
   luces[1]->gira();
   glutPostRedisplay();
   camaras[camaraActual]->rotarYExaminar(0.05);
+  camaras[(camaraActual + 1) % camaras.size()]->rotarYExaminar(0.05);
+  camaras[(camaraActual + 2) % camaras.size()]->rotarYExaminar(0.05);
+
 }
 //**************************************************************************
 
@@ -567,35 +613,10 @@ void Escena::teclaEspecial( int Tecla1, int x, int y )
 
 void Escena::redimensionar( int newWidth, int newHeight )
 {
+  Height = newHeight;
+  Width = newWidth;
   camaras[camaraActual]->redimensionar( newWidth, newHeight );
 }
-
-void Escena::dibuja_seleccion() {
-
-  // Dibuja cuatro patos
-  int n = 2; 
-  int m = 3; 
-  objetos_seleccion.resize(n*m);
-  glDisable(GL_DITHER); // deshabilita el degradado
-  for(int i = 0; i < n; i++){
-    //cout << "i = " << i << endl; 
-    for(int j = 0; j < m; j++) {
-      glPushMatrix();
-      switch (i*n+j) { // Un color para cada pato
-
-    }
-
-    glTranslatef(i*3.0,0,-j * 3.0);
-    objetos_seleccion[i*n+j] = new Cilindro(2,4);
-    objetos_seleccion[i*n+j]->draw((ModoVis) modo_actual, modo_diferido);
-    glPopMatrix();
-    }
-  }
-  //cout << "final" << endl; 
-  glEnable(GL_DITHER);
-  //cout << "final 2" << endl; 
-
- }
 
 void Escena::seleccionar(GLint x, GLint y){
 
@@ -650,25 +671,6 @@ void Escena::seleccionar(GLint x, GLint y){
     }
 
   }
-
-/*
-  // Le devolvemos el color original
-  for(int i = 0; i < objetos[objeto_actual].size(); i++){
-      objetos[objeto_actual][i]->setColorActual(coloresAntes[i]);
-      //cout << "Color actual (Después) = " << (int) objetos[objeto_actual][i]->getColorActual()[0](0) << "\t" << (int) objetos[objeto_actual][i]->getColorActual()[0](1) << "\t" << (int) objetos[objeto_actual][i]->getColorActual()[0](2) <<endl;  
-  }
-  // Cambiamos el estado
-  if(nSeleccionado != -1){
-    //if(objeto_actual == SELECCION)
-      if(!objetos[objeto_actual][nSeleccionado]->getSeleccionado())
-        camaras[camaraActual]->setAt(objetos[objeto_actual][nSeleccionado]->getPosicion());
-      else
-        camaras[camaraActual]->setAt({0, 0, 0});
-    objetos[objeto_actual][nSeleccionado]->seleccionado();
-  }
-
-  coloresAntes.clear();
-*/
 }
 
 Tupla3c Escena::leerPixel(GLint x, GLint y){
@@ -689,7 +691,7 @@ Tupla3c Escena::leerPixel(GLint x, GLint y){
   GLenum type = GL_UNSIGNED_INT;
   GLvoid * data = pixels.data();
 
-  glReadPixels( x, viewport[3]-y,
+  glReadPixels( x/2, (viewport[3]-y)/2,
                      width,
                      height,
                      format,

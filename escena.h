@@ -29,14 +29,7 @@ class Escena
    private:
 
    Ejes ejes;
-
-   // variables que definen la posicion de la camara en coordenadas polares
-   GLfloat Observer_distance;
-   GLfloat Observer_angle_x;
-   GLfloat Observer_angle_y;
-
-   // variables que controlan la ventana y la transformacion de perspectiva
-   GLfloat Width, Height, Front_plane, Back_plane;
+   int Width, Height;
 
   void clear_window();
 	void dibujar_objeto_actual();
@@ -47,7 +40,6 @@ class Escena
 	void change_observer();
   void pick( int x, int y);
   void procesarHits (GLint hits, GLuint buffer[]);
-  void dibuja_seleccion();
 
 
   // Objetos de la escena
