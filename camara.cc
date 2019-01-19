@@ -226,6 +226,10 @@ void Camara::setObserver(){
 
 }
 
+void Camara::setAt(Tupla3f at){
+	this->at = at; 
+
+}
 void Camara::setProyeccion(){
 
    glMatrixMode( GL_PROJECTION );
@@ -286,19 +290,4 @@ void Camara::redimensionar(int newWidth, int newHeight){
 
 }
 
-void Camara::inicioAnimaciones( )
-{
-   using namespace std::chrono ;
-   ultima_actu = steady_clock::now() ;
-}
 
-void Camara::girar(){
-
-   using namespace std::chrono ;
-
-   const Instante   ahora       =  steady_clock::now();
-   const Duracion_s duracion_s  =  ahora - ultima_actu;
-   ultima_actu = ahora ;
-   rotarYExaminar(duracion_s.count() * 100);
-
-}

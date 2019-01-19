@@ -15,3 +15,11 @@ void Objeto::seleccionado(){
 //std::cout << "sele = " << selec << std::endl; 
    selec = !selec; 
 }
+
+Tupla3f Objeto::getPosicion(){
+	return posicion; 
+}
+
+void Objeto::setPosicion(Tupla3f posicion){
+	this->posicion = posicion; 
+}

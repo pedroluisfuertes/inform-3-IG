@@ -63,9 +63,7 @@ class Escena
 
     };
     std::vector< std::vector<Objeto*> > objetos;
-   std::vector<Tupla3f> posicionesSeleccion;
-   std::vector<std::vector<Tupla3c> > coloresAleatorios;
-   std::vector<Tupla3c> coloresAntes;
+
     std::vector<Objeto*> objetos_seleccion;
     
     bool botonIzquierdoPulsado = false;

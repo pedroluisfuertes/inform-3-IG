@@ -33,12 +33,15 @@ protected:
 	TipoObjeto tipo;
 	Tupla3c colorSeleccionado = {0, 255, 0}; 
 	bool selec = false; 
+	Tupla3f posicion = {0, 0, 0}; 
 
 public:
 	TipoObjeto getTipo();
 	bool getSeleccionado();
 	void setSeleccionado(bool selec);
 	void seleccionado();
+	Tupla3f getPosicion();
+	void setPosicion(Tupla3f posicion);
 
 	virtual void siguienteColor() = 0;
 	virtual void addColor(Tupla3c color) = 0;

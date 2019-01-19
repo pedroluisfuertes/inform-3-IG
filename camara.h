@@ -38,10 +38,9 @@ class Camara {
 	void zoom ( float factor ) ;
 	void setObserver ( ) ; // completar
 	void setProyeccion () ;
+	void setAt (Tupla3f at) ;
 	float producto_escalar(Tupla3f v1, Tupla3f v2, int d);
 	void redimensionar ( int newWidth, int newHeight );
-	void inicioAnimaciones();
-	void girar();
 };
 
 #endif
