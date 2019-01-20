@@ -219,6 +219,10 @@ void Camara::rotarZExaminar (float angulo){
 
 }
 
+void Camara::draw(){
+	setObserver();
+	setProyeccion();
+}
 void Camara::setObserver(){
 	glMatrixMode(GL_MODELVIEW);
   	glLoadIdentity();

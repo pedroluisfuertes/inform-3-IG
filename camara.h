@@ -36,6 +36,7 @@ class Camara {
 	void rotarZExaminar ( float angle ) ;
 	void mover ( float x , float y , float z ) ;
 	void zoom ( float factor ) ;
+	void draw ( ) ; 
 	void setObserver ( ) ; // completar
 	void setProyeccion () ;
 	void setAt (Tupla3f at) ;

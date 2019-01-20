@@ -19,13 +19,6 @@ using namespace std;
 
 Escena::Escena()
 {
-  
-    Front_plane       = 0.1;
-    Back_plane        = 2000.0;
-    Observer_distance = 2.0;
-    Observer_angle_x  = 0.0 ;
-    Observer_angle_y  = 0.0 ;
-
     ejes.changeAxisSize( 5000 );
     srand (time(NULL));
     //num_texturas = 2; // se usa para cambiar las texturas 't'
@@ -46,8 +39,6 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
 
 	glEnable( GL_DEPTH_TEST );	// se habilita el z-bufer
     std::vector<Objeto*> v;
-    std::vector<Tupla3c> v2;
-    
 
     for(int i = 0; i < 9; i++){
       int nObj; 
@@ -61,7 +52,7 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
         if(i != SELECCION)
           obj = i;
         else
-          obj = rand() % 4;
+          obj = rand() % 6;
         //cout << "j = " << j << endl; 
         switch( obj )
        {  
@@ -87,7 +78,7 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
             v.push_back(new Cuadro());
           break;
           case OBJ_PLY:
-            v.push_back(new ObjPLY("./plys/ant.ply"));
+            v.push_back(new ObjPLY(rutasPLYs[rand() % (rutasPLYs.size()-1)]));
           break;
           /*default:
             cout << "objeto = " <<  obj << endl; 
@@ -96,13 +87,12 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
 
         }
         if(i == SELECCION){
-          v[v.size()-1]->setPosicion({rand() % 10-5, rand() % 10-5, rand() % 10-5});
+          v[v.size()-1]->setPosicion({rand() % 100-50, rand() % 100-50, rand() % 100-50});
         }
         else{
           v[v.size()-1]->setPosicion({0, 0, 0});
         }
 
-        v2.push_back({rand() % 255, rand() % 255, rand() % 255});
       }
       
       objetos.push_back(v);
@@ -163,15 +153,6 @@ void Escena::inicializar( int UI_window_width, int UI_window_height )
                                  2,200 // Profundo
                                  )); // Ortogonal
 
-    //camaras.push_back(new Camara());
-
-	/*Width  = UI_window_width/10;
-	Height = UI_window_height/10;
-
-   change_projection( float(UI_window_width)/float(UI_window_height) );
-	glViewport( 0, 0, UI_window_width, UI_window_height );*/
-  //redimensionar( UI_window_width, UI_window_height );
-
 }
 
 // **************************************************************************
@@ -190,10 +171,11 @@ void Escena::dibujar_objeto_actual()
    using namespace std ;
    //cout << "objetos[objeto_actual].size() = " << objetos[objeto_actual].size() << endl; 
    for(int i = 0; i < objetos[objeto_actual].size(); i++){
-    if(objetos[objeto_actual][i]->getTipo() == OBJ_PLY && leer_ply)
-      leerPLY();
+    //if(objetos[objeto_actual][i]->getTipo() == OBJ_PLY && leer_ply)
+      //leerPLY();
     //if(objeto_actual == SELECCION){
       glPushMatrix();
+      //cout << " Posicion = " << objetos[objeto_actual][i]->getPosicion()(0) << "\t" << objetos[objeto_actual][i]->getPosicion()(1) << "\t" << objetos[objeto_actual][i]->getPosicion()(2) << "\t" << endl;
       glTranslatef(objetos[objeto_actual][i]->getPosicion()(0), objetos[objeto_actual][i]->getPosicion()(1), objetos[objeto_actual][i]->getPosicion()(2));
       //glScalef(rand() % 10, rand() % 10, rand() % 10);
       objetos[objeto_actual][i]->draw((ModoVis) modo_actual, modo_diferido);
@@ -327,7 +309,7 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
         conmutarAnimaciones(); 
       break;
       case 'A' :
-        obj = rand() % 4;
+        obj = rand() % 6;
         //cout << "j = " << j << endl; 
         switch( obj )
        {  
@@ -353,7 +335,7 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
             objetos[objeto_actual].push_back(new Cuadro());
           break;
           case OBJ_PLY:
-            objetos[objeto_actual].push_back(new ObjPLY("./plys/ant.ply"));
+            objetos[objeto_actual].push_back(new ObjPLY(rutasPLYs[rand() % (rutasPLYs.size())]));
           break;
           /*default:
             cout << "objeto = " <<  obj << endl; 
@@ -361,15 +343,18 @@ bool Escena::teclaPulsada( unsigned char tecla, int x, int y )
           break;*/
 
         }
-          objetos[objeto_actual][objetos[objeto_actual].size()-1]->setPosicion({rand() % 10-5, rand() % 10-5, rand() % 10-5});
+        objetos[objeto_actual][objetos[objeto_actual].size()-1]->setPosicion({rand() % 100-50, rand() % 100-50, rand() % 100-50});
+        cout << "Se ha creado un nuevo objeto de tipo " << obj << endl; 
       break ;
       case 'S' :
         if(!objetos[objeto_actual].empty())
           objetos[objeto_actual].erase(objetos[objeto_actual].end()-1);
+        cout << "Se ha eliminado un objeto de manera secuencial "<< endl; 
       break;
       case 'D' :
         if(!objetos[objeto_actual].empty())
           objetos[objeto_actual].erase(objetos[objeto_actual].begin() + rand() % objetos[objeto_actual].size());
+        cout << "Se ha eliminado un objeto de manera aleatoria "<< endl; 
       break;
       case 'u' :
       case 'U' :
@@ -570,32 +555,6 @@ void Escena::redimensionar( int newWidth, int newHeight )
   camaras[camaraActual]->redimensionar( newWidth, newHeight );
 }
 
-void Escena::dibuja_seleccion() {
-
-  // Dibuja cuatro patos
-  int n = 2; 
-  int m = 3; 
-  objetos_seleccion.resize(n*m);
-  glDisable(GL_DITHER); // deshabilita el degradado
-  for(int i = 0; i < n; i++){
-    //cout << "i = " << i << endl; 
-    for(int j = 0; j < m; j++) {
-      glPushMatrix();
-      switch (i*n+j) { // Un color para cada pato
-
-    }
-
-    glTranslatef(i*3.0,0,-j * 3.0);
-    objetos_seleccion[i*n+j] = new Cilindro(2,4);
-    objetos_seleccion[i*n+j]->draw((ModoVis) modo_actual, modo_diferido);
-    glPopMatrix();
-    }
-  }
-  //cout << "final" << endl; 
-  glEnable(GL_DITHER);
-  //cout << "final 2" << endl; 
-
- }
 
 void Escena::seleccionar(GLint x, GLint y){
 
@@ -629,8 +588,8 @@ void Escena::seleccionar(GLint x, GLint y){
     colorAntes = coloresAntes[i];
     objetos[objeto_actual][i]->setColorActual(colorRamdom);
     Tupla3c colorsel = leerPixel(x,y);
-    cout << "colorsel = " << (int) colorsel(0) << "\t" << (int) colorsel(1) << "\t" << (int) colorsel(2) << "\t" << endl;
-    cout << "colorRamdom = " << (int) colorRamdom(0) << "\t" << (int) colorRamdom(1) << "\t" << (int) colorRamdom(2) << "\t" << endl;
+    //cout << "colorsel = " << (int) colorsel(0) << "\t" << (int) colorsel(1) << "\t" << (int) colorsel(2) << "\t" << endl;
+    //cout << "colorRamdom = " << (int) colorRamdom(0) << "\t" << (int) colorRamdom(1) << "\t" << (int) colorRamdom(2) << "\t" << endl;
     if(colorsel(0) == colorRamdom(0) && 
        colorsel(1) == colorRamdom(1) &&
        colorsel(2) == colorRamdom(2) ){       
@@ -643,32 +602,13 @@ void Escena::seleccionar(GLint x, GLint y){
       else
         camaras[camaraActual]->setAt({0, 0, 0});
 
-       cout << "Se ha seleccionado un objeto tipo " << objetos[objeto_actual][i]->getTipo() << endl; 
+       //cout << "Se ha seleccionado un objeto tipo " << objetos[objeto_actual][i]->getTipo() << endl; 
     }else{
       objetos[objeto_actual][i]->setColorActual(colorAntes);
 
     }
 
   }
-
-/*
-  // Le devolvemos el color original
-  for(int i = 0; i < objetos[objeto_actual].size(); i++){
-      objetos[objeto_actual][i]->setColorActual(coloresAntes[i]);
-      //cout << "Color actual (Después) = " << (int) objetos[objeto_actual][i]->getColorActual()[0](0) << "\t" << (int) objetos[objeto_actual][i]->getColorActual()[0](1) << "\t" << (int) objetos[objeto_actual][i]->getColorActual()[0](2) <<endl;  
-  }
-  // Cambiamos el estado
-  if(nSeleccionado != -1){
-    //if(objeto_actual == SELECCION)
-      if(!objetos[objeto_actual][nSeleccionado]->getSeleccionado())
-        camaras[camaraActual]->setAt(objetos[objeto_actual][nSeleccionado]->getPosicion());
-      else
-        camaras[camaraActual]->setAt({0, 0, 0});
-    objetos[objeto_actual][nSeleccionado]->seleccionado();
-  }
-
-  coloresAntes.clear();
-*/
 }
 
 Tupla3c Escena::leerPixel(GLint x, GLint y){
@@ -676,7 +616,6 @@ Tupla3c Escena::leerPixel(GLint x, GLint y){
   GLint viewport[4];
 
   glGetIntegerv(GL_VIEWPORT, viewport);
-  //glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(GLubyte *) &pixel[0]);
 
   vector< unsigned int > pixels(3);
   Tupla3c salida; 

@@ -30,25 +30,15 @@ class Escena
 
    Ejes ejes;
 
-   // variables que definen la posicion de la camara en coordenadas polares
-   GLfloat Observer_distance;
-   GLfloat Observer_angle_x;
-   GLfloat Observer_angle_y;
-
-   // variables que controlan la ventana y la transformacion de perspectiva
-   GLfloat Width, Height, Front_plane, Back_plane;
-
   void clear_window();
 	void dibujar_objeto_actual();
   void dibujar_luces();
 
-  // Transformación de cámara
-	void change_projection( const float ratio_xy );
-	void change_observer();
-  void pick( int x, int y);
-  void procesarHits (GLint hits, GLuint buffer[]);
-  void dibuja_seleccion();
-
+  std::vector<string> rutasPLYs = {
+    "./plys/ant.ply",
+    "./plys/big_dodge.ply",
+    "./plys/beethoven.ply"
+  };
 
   // Objetos de la escena
     int objeto_actual = 0; // objeto actual (el que se visualiza)
@@ -63,8 +53,6 @@ class Escena
 
     };
     std::vector< std::vector<Objeto*> > objetos;
-
-    std::vector<Objeto*> objetos_seleccion;
     
     bool botonIzquierdoPulsado = false;
     int cx = 0, cy = 0;
